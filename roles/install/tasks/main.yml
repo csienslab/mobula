@@ -1,0 +1,63 @@
+---
+- name: Install Packages
+  package: 
+    name: '{{item}}'
+    state: present
+  with_items:
+    - '{{pkgs_iproute2}}'
+    - '{{pkgs_openvswitch}}'
+    - '{{pkgs_dnsmasq}}'
+
+- name: Enable Services
+  systemd:
+    name: '{{service_openvswitch}}'
+    state: started
+    enabled: yes
+
+- name: Create Mobula Directory
+  file:
+    path: '{{install_dir}}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy Mobula Scripts
+  copy:
+    src: '{{item}}'
+    dest: '{{install_dir}}'
+    owner: root
+    group: root
+    mode: 755
+  with_items: '{{["lib/start.sh", "lib/gateway.sh", "lib/install_ovs.sh"]}}'
+
+- name: Generate Mobula Configuration
+  template:
+    src: '{{item}}'
+    dest: '{{install_dir}}'
+    owner: root
+    group: root
+    mode: 644
+  with_items: '{{["templates/constants.conf", "templates/network.conf"]}}'
+
+- name: Install OVS Configuration
+  script: 'lib/install_ovs.sh'
+  args:
+    chdir: '{{install_dir}}'
+
+- name: Setup Network Configuration
+  include_tasks: 'networks/{{ansible_distribution}}.yml'
+
+- name: Copy Mobula Service
+  copy:
+    src: 'lib/mobula.service'
+    dest: '/etc/systemd/system'
+    owner: root
+    group: root
+    mode: 644
+
+- name: Enable Mobula Service
+  systemd:
+    name: 'mobula'
+    state: stopped
+    enabled: yes

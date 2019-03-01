@@ -1,0 +1,5 @@
+---
+install_dir: '/opt/mobula'
+ext_net: '{{ansible_default_ipv4}}'
+gateway_net: '10.31.0.{{host_id * 2}}/24'
+veth_m0_ip: '10.31.0.{{host_id * 2 + 1}}'

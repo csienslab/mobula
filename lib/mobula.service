@@ -1,0 +1,15 @@
+[Unit]
+Description=Mobula Network
+After=systemd-udevd.service systemd-sysctl.service systemd-sysusers.service
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/mobula/start.sh
+RemainAfterExit=yes
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target

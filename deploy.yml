@@ -1,0 +1,18 @@
+---
+# This playbook deploys Mobula network
+
+- hosts: all
+  remote_user: root
+  tasks:
+  - name: Check and Initialize
+    fail:
+      msg: 'Not supported OS: {{ansible_distribution}}'
+    when: ansible_distribution not in ['CentOS']
+
+  - name: Load OS Variables
+    include_vars: 'osvars/{{ansible_distribution}}.yml'
+
+  - name: Check or Install
+    include_role:
+      name: install
+    when: true

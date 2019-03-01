@@ -1,0 +1,22 @@
+---
+- include_vars: 'vars/{{ansible_distribution}}.yml'
+
+- name: Generate Network Configuration
+  template: 
+    src: 'templates/ifcfg-veth_m0'
+    dest: '{{network_script_dir}}'
+    owner: root
+    group: root
+    mode: 644
+
+- name: Backup External Network
+  copy:
+    remote_src: yes
+    src: '{{network_script_dir}}/ifcfg-{{ext_net.interface}}'
+    dest: '{{network_script_dir}}/ifcfg-{{ext_net.interface}}.bak'
+    owner: root
+    group: root
+    mode: 644
+
+#- name: Disable External Network
+
