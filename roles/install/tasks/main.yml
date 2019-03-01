@@ -40,7 +40,9 @@
     owner: root
     group: root
     mode: 0755
-  with_items: '{{["lib/start.sh", "lib/gateway.sh", "lib/install_ovs.sh"]}}'
+  with_items:
+    - 'lib/start.sh'
+    - 'lib/gateway.sh'
 
 - name: Generate Mobula Configuration
   template:
@@ -49,8 +51,12 @@
     owner: root
     group: root
     mode: 0644
-  with_items: '{{["templates/constants.conf", "templates/network.conf", "templates/wg0.conf"]}}'
+  with_items:
+    - 'templates/constants.conf'
+    - 'templates/network.conf'
+    - 'templates/{{wireguard_interface}}.conf'
 
+# Reset OVS switch could make network disconnect temporarily
 - name: Install OVS Configuration
   script: 'lib/install_ovs.sh'
   args:

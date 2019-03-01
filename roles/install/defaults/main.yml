@@ -2,4 +2,3 @@
 veth_m0_ip: '10.31.0.{{host_id * 2}}'
 gateway_ip: '10.31.0.{{host_id * 2 + 1}}'
 rand_macaddr: '{{"00:15:5d" | random_mac}}'
-wg0_ip: '10.63.0.{{host_id * 2}}'

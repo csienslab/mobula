@@ -1,1 +1,38 @@
 ---
+- name: Generate WireGuard Configuration
+  template:
+    src: 'templates/{{wireguard_interface}}.conf'
+    dest: '{{install_dir}}'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Restart WireGuard
+  shell: |
+    ip netns exec {{namespace_name}} wg-quick down {{install_dir}}/{{wireguard_interface}}.conf
+    ip netns exec {{namespace_name}} wg-quick up {{install_dir}}/{{wireguard_interface}}.conf
+
+- name: List OVS Ports
+  shell: 'ovs-vsctl list-ports {{ovs_bridge}}'
+  register: port_list_result
+
+- name: Clean OVS Tunnels
+  openvswitch_port:
+    bridge: '{{ovs_bridge}}'
+    port: '{{item}}'
+    state: 'absent'
+  when: item is match(gre_tunnel_prefix + '*')
+  with_items:
+    - '{{port_list_result.stdout_lines}}'
+
+- name: Create OVS Tunnels
+  openvswitch_port:
+    bridge: '{{ovs_bridge}}'
+    port: '{{gre_tunnel_prefix}}{{hostvars[item].host_id}}'
+    state: 'present'
+    set: >
+      interface {{gre_tunnel_prefix}}{{hostvars[item].host_id}}
+      type=gre options:remote_ip=10.63.0.{{hostvars[item].host_id}}
+  when: item != inventory_hostname
+  with_inventory_hostnames:
+    - all

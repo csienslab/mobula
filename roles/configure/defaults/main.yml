@@ -1,0 +1,2 @@
+---
+gre_tunnel_prefix: 'gre-{{mark}}-'
