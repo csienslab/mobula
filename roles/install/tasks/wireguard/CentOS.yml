@@ -1,0 +1,17 @@
+---
+- name: Add Repository
+  get_url:
+    url: 'https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo'
+    dest: '/etc/yum.repos.d/wireguard.repo'
+    mode: 0644
+
+- name: Install EPEL Release
+  package:
+    name: epel-release
+    state: present
+
+- name: Install WireGuard
+  package:
+    name: '{{item}}'
+    state: present
+  with_items: '{{["wireguard-dkms", "wireguard-tools"]}}'

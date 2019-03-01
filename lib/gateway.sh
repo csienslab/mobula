@@ -21,5 +21,8 @@ iptables -t nat -A POSTROUTING -o ${GW_EXTIF} -j MASQUERADE
 iptables -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${VETH_M0_IP}:22
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
+# Setup the WireGuard
+wg-quick up ${BASEDIR}/wg0.conf
+
 # Test and update the ARP of the external gateway
 ping -W 6 -c 10 ${EXT_GATEWAY} &

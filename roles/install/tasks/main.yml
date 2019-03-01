@@ -8,6 +8,9 @@
     - '{{pkgs_openvswitch}}'
     - '{{pkgs_dnsmasq}}'
 
+- name: Install WireGuard
+  include_tasks: 'wireguard/{{ansible_distribution}}.yml'
+
 - name: Enable Services
   systemd:
     name: '{{service_openvswitch}}'
@@ -20,7 +23,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: 0700
 
 - name: Backup External Interface
   copy:
@@ -28,7 +31,7 @@
     dest: '{{install_dir}}/extif.json'
     owner: root
     group: root
-    mode: 644
+    mode: 0644
 
 - name: Copy Mobula Scripts
   copy:
@@ -36,7 +39,7 @@
     dest: '{{install_dir}}'
     owner: root
     group: root
-    mode: 755
+    mode: 0755
   with_items: '{{["lib/start.sh", "lib/gateway.sh", "lib/install_ovs.sh"]}}'
 
 - name: Generate Mobula Configuration
@@ -45,8 +48,8 @@
     dest: '{{install_dir}}'
     owner: root
     group: root
-    mode: 644
-  with_items: '{{["templates/constants.conf", "templates/network.conf"]}}'
+    mode: 0644
+  with_items: '{{["templates/constants.conf", "templates/network.conf", "templates/wg0.conf"]}}'
 
 - name: Install OVS Configuration
   script: 'lib/install_ovs.sh'
@@ -62,7 +65,7 @@
     dest: '/etc/systemd/system'
     owner: root
     group: root
-    mode: 644
+    mode: 0644
 
 - name: Enable Mobula Service
   systemd:
