@@ -1,7 +1,7 @@
 [Unit]
 Description=Mobula Network
 After=systemd-udevd.service systemd-sysctl.service systemd-sysusers.service
-Before=network-pre.target
+Before=network-pre.target openvswitch-nonetwork.service ovs-vswitchd.service
 Wants=network-pre.target
 
 [Service]
