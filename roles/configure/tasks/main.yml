@@ -9,8 +9,8 @@
 
 - name: Restart WireGuard
   shell: |
-    ip netns exec {{namespace_name}} wg-quick down {{install_dir}}/{{wireguard_interface}}.conf
-    ip netns exec {{namespace_name}} wg-quick up {{install_dir}}/{{wireguard_interface}}.conf
+    wg-quick down {{install_dir}}/{{wireguard_interface}}.conf
+    wg-quick up {{install_dir}}/{{wireguard_interface}}.conf
 
 - name: List OVS Ports
   shell: 'ovs-vsctl list-ports {{ovs_bridge}}'

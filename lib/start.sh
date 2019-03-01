@@ -33,3 +33,7 @@ ip link set ${EXT_IF} up
 
 # Setup the gateway
 ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh
+
+# Setup WireGuard
+wg-quick down ${BASEDIR}/${HOST_WGIF}.conf
+wg-quick up ${BASEDIR}/${HOST_WGIF}.conf
