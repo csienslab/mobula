@@ -31,6 +31,10 @@
     mode: 755
   with_items: '{{["lib/start.sh", "lib/gateway.sh", "lib/install_ovs.sh"]}}'
 
+- name: Generate Random MAC Address
+  shell: 'printf "00:15:5d:%02x:%02x:%02x" $[RANDOM%256] $[RANDOM%256] $[RANDOM%256]'
+  register: rand_mac_result
+
 - name: Generate Mobula Configuration
   template:
     src: '{{item}}'
@@ -61,3 +65,6 @@
     name: 'mobula'
     state: stopped
     enabled: yes
+
+- name: Reboot
+  reboot:

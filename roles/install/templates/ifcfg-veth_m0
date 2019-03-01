@@ -3,6 +3,6 @@ TYPE=Ethernet
 BOOTPROTO=none
 IPADDR={{veth_m0_ip}}
 NETMASK=255.255.255.0
-GATEWAY=206.189.32.1
+GATEWAY={{gateway_ip}}
 DEFROUTE=yes
 ONBOOT=yes

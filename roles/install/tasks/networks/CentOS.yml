@@ -9,14 +9,11 @@
     group: root
     mode: 644
 
-- name: Backup External Network
-  copy:
-    remote_src: yes
-    src: '{{network_script_dir}}/ifcfg-{{ext_net.interface}}'
-    dest: '{{network_script_dir}}/ifcfg-{{ext_net.interface}}.bak'
+- name: Replace External Network
+  template:
+    src: 'templates/ifcfg-origin'
+    dest: '{{network_script_dir}}/ifcfg-{{ext_net.interface}}'
+    backup: yes
     owner: root
     group: root
     mode: 644
-
-#- name: Disable External Network
-

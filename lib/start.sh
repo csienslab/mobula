@@ -26,7 +26,9 @@ ip link set ${OVS_VETH} up
 ip link add link ${EXT_IF} ${GW_EXTIF} type macvlan
 ip link set ${GW_EXTIF} netns ${NS_NAME}
 
-# Bring up the outdoor interface
+# Replace the original mac address
+ip link set ${EXT_IF} address ${RAND_MACADDR}
+# Bring up the external interface
 ip link set ${EXT_IF} up
 
 # Setup the gateway
