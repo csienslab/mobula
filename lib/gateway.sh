@@ -24,8 +24,11 @@ iptables -t nat -A POSTROUTING -o ${GW_WGIF} -j MASQUERADE
 iptables -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${VETH_M0_IP}:22
 
 # Enhance the firewall
+# Only open the WireGuard on the external interface
+iptables -A INPUT -i ${GW_EXTIF} -p udp --dport 51820 -j ACCEPT
 iptables -A INPUT -i ${GW_EXTIF} -j DROP
 iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+# Only forward the SSH from the external interface
 iptables -A FORWARD -i ${GW_EXTIF} -p tcp --dport 22 -j ACCEPT
 iptables -A FORWARD -i ${GW_EXTIF} -j DROP
 
