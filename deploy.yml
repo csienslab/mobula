@@ -9,10 +9,34 @@
       msg: 'Not supported OS: {{ansible_distribution}}'
     when: ansible_distribution not in ['CentOS']
 
-  - name: Load OS Variables
-    include_vars: 'osvars/{{ansible_distribution}}.yml'
+  - include_vars: 'vars/default.yml'
+  - include_vars: 'vars/{{ansible_distribution}}.yml'
 
-  - name: Check or Install
+  - name: Check Installed Mobula
+    stat:
+      path: '{{install_dir}}'
+    register: mobula_install_result
+
+  - name: Get External Interface
+    set_fact:
+      ext_net: '{{ansible_default_ipv4}}'
+    when: not mobula_install_result.stat.exists
+
+  - name: Fetch External Interface
+    shell: 'cat {{install_dir}}/extif.json'
+    register: 'extif_json_result'
+    when: mobula_install_result.stat.exists
+
+  - name: Load External Interface
+    set_fact:
+      ext_net: '{{extif_json_result.stdout | from_json}}'
+    when: mobula_install_result.stat.exists
+
+  - name: Install
     include_role:
       name: install
-    when: true
+    when: not mobula_install_result.stat.exists or reinstall is defined
+
+  - name: Configure
+    include_role:
+      name: configure

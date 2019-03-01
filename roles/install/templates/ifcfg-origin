@@ -2,4 +2,4 @@ DEVICE={{ext_net.interface}}
 TYPE=Ethernet
 BOOTPROTO=none
 ONBOOT=yes
-HWADDR={{rand_mac_result.stdout}}
+HWADDR={{rand_macaddr}}

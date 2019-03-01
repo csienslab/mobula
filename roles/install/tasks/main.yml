@@ -22,6 +22,14 @@
     group: root
     mode: 0755
 
+- name: Backup External Interface
+  copy:
+    content: '{{ext_net | to_json}}'
+    dest: '{{install_dir}}/extif.json'
+    owner: root
+    group: root
+    mode: 644
+
 - name: Copy Mobula Scripts
   copy:
     src: '{{item}}'
@@ -30,10 +38,6 @@
     group: root
     mode: 755
   with_items: '{{["lib/start.sh", "lib/gateway.sh", "lib/install_ovs.sh"]}}'
-
-- name: Generate Random MAC Address
-  shell: 'printf "00:15:5d:%02x:%02x:%02x" $[RANDOM%256] $[RANDOM%256] $[RANDOM%256]'
-  register: rand_mac_result
 
 - name: Generate Mobula Configuration
   template:
