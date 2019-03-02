@@ -1,8 +1,8 @@
 ---
 - name: Generate WireGuard Configuration
   template:
-    src: 'templates/{{wireguard_interface}}.conf'
-    dest: '{{install_dir}}'
+    src: 'templates/wg0.conf'
+    dest: '{{install_dir}}/{{wireguard_interface}}.conf'
     owner: root
     group: root
     mode: 0644
