@@ -9,11 +9,23 @@
     group: root
     mode: 644
 
-- name: Replace External Network
-  template:
-    src: 'templates/ifcfg-origin'
-    dest: '{{network_script_dir}}/ifcfg-{{ext_net.interface}}'
-    backup: yes
+- name: Check Original Network Configuration
+  stat:
+    path: '{{network_script_dir}}/ifcfg-{{ext_net.interface}}'
+  register: original_config_result
+
+- name: Backup Original Network Configuration
+  copy:
+    src: '{{original_config_result.stat.path}}'
+    dest: '{{original_config_result.stat.path}}.bak'
+    remote_src: yes
     owner: root
     group: root
-    mode: 644
+    mode: preserve
+  when: original_config_result.stat.exists
+
+- name: Disable Original Network Configuration
+  file:
+    path: '{{original_config_result.stat.path}}'
+    state: absent
+  when: original_config_result.stat.exists

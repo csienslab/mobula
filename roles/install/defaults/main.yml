@@ -1,4 +1,7 @@
 ---
-veth_m0_ip: '10.31.0.{{host_id * 2}}'
+gateway_access_interface: 'mo-acc-gw'
+ovs_access_interface: 'mo-acc-ovs'
+ovs_veth_interface: 'mo-veth-ovs'
 gateway_ip: '10.31.0.{{host_id * 2 + 1}}'
+veth_m0_ip: '10.31.0.{{host_id * 2}}'
 rand_macaddr: '{{"00:15:5d" | random_mac}}'

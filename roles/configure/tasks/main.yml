@@ -32,7 +32,7 @@
     state: 'present'
     set: >
       interface {{vxlan_tunnel_prefix}}{{hostvars[item].host_id}}
-      type=vxlan options:remote_ip=10.63.0.{{hostvars[item].host_id}}
+      type=vxlan options:remote_ip=10.30.0.{{hostvars[item].host_id}}
   when: item != inventory_hostname
   with_inventory_hostnames:
     - all

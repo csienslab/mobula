@@ -10,9 +10,9 @@ ip link set lo up
 ip addr add ${GW_DIRIF_IP}/31 dev ${GW_DIRIF}
 ip link set ${GW_DIRIF} up
 
-# Setup the gateway network
-ip addr add ${GATEWAY_NET} dev ${GW_INTIF}
-ip link set ${GW_INTIF} up
+# Setup the access network
+ip addr add ${GATEWAY_NET} dev ${GW_ACCIF}
+ip link set ${GW_ACCIF} up
 
 # Setup the external network
 ip link set ${GW_EXTIF} address ${EXT_MACADDR}
@@ -39,6 +39,9 @@ iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 # Only forward SSH from the external interface
 iptables -A FORWARD -i ${GW_EXTIF} -p tcp --dport 22 -j ACCEPT
 iptables -A FORWARD -i ${GW_EXTIF} -j DROP
+# Block all IPv6 traffic from the external interface
+ip6tables -A INPUT -i ${GW_EXTIF} -j DROP
+ip6tables -A FORWARD -i ${GW_EXTIF} -j DROP
 
 # Setup WireGuard
 wg-quick up ${BASEDIR}/${GW_WGIF}.conf
