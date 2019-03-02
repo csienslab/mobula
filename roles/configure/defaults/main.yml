@@ -1,2 +1,2 @@
 ---
-gre_tunnel_prefix: 'gre-{{mark}}-'
+vxlan_tunnel_prefix: 'vxlan-{{mark}}-'

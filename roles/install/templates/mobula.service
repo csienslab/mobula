@@ -6,7 +6,7 @@ Wants=network-pre.target
 
 [Service]
 Type=oneshot
-ExecStart=/opt/mobula/start.sh
+ExecStart={{install_dir}}/start.sh
 RemainAfterExit=yes
 StandardOutput=journal+console
 StandardError=journal+console

@@ -56,7 +56,7 @@
     - 'templates/network.conf'
     - 'templates/{{wireguard_interface}}.conf'
 
-# Reset OVS switch could make network disconnect temporarily
+# Reseting OVS switch could make network disconnect temporarily
 - name: Install OVS Configuration
   script: 'lib/install_ovs.sh'
   args:
@@ -66,8 +66,8 @@
   include_tasks: 'networks/{{ansible_distribution}}.yml'
 
 - name: Copy Mobula Service
-  copy:
-    src: 'lib/mobula.service'
+  template:
+    src: 'templates/mobula.service'
     dest: '/etc/systemd/system'
     owner: root
     group: root

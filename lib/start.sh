@@ -10,10 +10,18 @@ ip link del ${GW_INTIF} 2>/dev/null
 ip link del ${OVS_INTIF} 2>/dev/null
 ip link del ${HOST_VETH} 2>/dev/null
 ip link del ${OVS_VETH} 2>/dev/null
+
+ip link del ${HOST_DIRIF} 2>/dev/null
 ip netns del ${NS_NAME} 2>/dev/null
 
-# Setup the interfaces and namespaces
+# Setup interfaces and namespaces
 ip netns add ${NS_NAME}
+
+# Setup the direct network
+ip link add ${GW_DIRIF} type veth peer name ${HS_DIRIF}
+ip link set ${GW_DIRIF} netns ${NS_NAME}
+ip addr add ${HS_DIRIF_IP}/31 dev ${HS_DIRIF}
+ip link set ${HS_DIRIF} up
 
 ip link add ${OVS_INTIF} type veth peer name ${GW_INTIF}
 ip link set ${GW_INTIF} netns ${NS_NAME}
@@ -34,6 +42,5 @@ ip link set ${EXT_IF} up
 # Setup the gateway
 ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh
 
-# Setup WireGuard
-wg-quick down ${BASEDIR}/${HOST_WGIF}.conf
-wg-quick up ${BASEDIR}/${HOST_WGIF}.conf
+# Route WireGuard traffic to the direct network
+ip route add 10.63.0.0/24 via ${GW_DIRIF_IP} dev ${HS_DIRIF}

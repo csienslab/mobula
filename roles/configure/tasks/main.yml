@@ -9,8 +9,8 @@
 
 - name: Restart WireGuard
   shell: |
-    wg-quick down {{install_dir}}/{{wireguard_interface}}.conf
-    wg-quick up {{install_dir}}/{{wireguard_interface}}.conf
+    ip netns exec {{namespace_name}} wg-quick down {{install_dir}}/{{wireguard_interface}}.conf
+    ip netns exec {{namespace_name}} wg-quick up {{install_dir}}/{{wireguard_interface}}.conf
 
 - name: List OVS Ports
   shell: 'ovs-vsctl list-ports {{ovs_bridge}}'
@@ -21,18 +21,18 @@
     bridge: '{{ovs_bridge}}'
     port: '{{item}}'
     state: 'absent'
-  when: item is match(gre_tunnel_prefix + '*')
+  when: item is match(vxlan_tunnel_prefix + '*')
   with_items:
     - '{{port_list_result.stdout_lines}}'
 
 - name: Create OVS Tunnels
   openvswitch_port:
     bridge: '{{ovs_bridge}}'
-    port: '{{gre_tunnel_prefix}}{{hostvars[item].host_id}}'
+    port: '{{vxlan_tunnel_prefix}}{{hostvars[item].host_id}}'
     state: 'present'
     set: >
-      interface {{gre_tunnel_prefix}}{{hostvars[item].host_id}}
-      type=gre options:remote_ip=10.63.0.{{hostvars[item].host_id}}
+      interface {{vxlan_tunnel_prefix}}{{hostvars[item].host_id}}
+      type=vxlan options:remote_ip=10.63.0.{{hostvars[item].host_id}}
   when: item != inventory_hostname
   with_inventory_hostnames:
     - all

@@ -9,7 +9,7 @@
       msg: 'Not supported OS: {{ansible_distribution}}'
     when: ansible_distribution not in ['CentOS']
 
-  - include_vars: 'vars/default.yml'
+  - include_vars: 'vars/common.yml'
   - include_vars: 'vars/{{ansible_distribution}}.yml'
 
   - name: Check Installed Mobula
