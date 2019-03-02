@@ -3,8 +3,8 @@
 
 - name: Generate Network Configuration
   template: 
-    src: 'templates/ifcfg-veth_m0'
-    dest: '{{network_script_dir}}'
+    src: 'templates/ifcfg-veth-hs'
+    dest: '{{network_script_dir}}/ifcfg-{{hs_veth_interface}}'
     owner: root
     group: root
     mode: 644

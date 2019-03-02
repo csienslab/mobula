@@ -1,7 +1,7 @@
-DEVICE=veth_m0
+DEVICE={{hs_veth_interface}}
 TYPE=Ethernet
 BOOTPROTO=none
-IPADDR={{veth_m0_ip}}
+IPADDR={{hs_veth_ip}}
 NETMASK=255.255.255.0
 GATEWAY={{gateway_ip}}
 DEFROUTE=yes
