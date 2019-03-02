@@ -35,7 +35,7 @@ ip link add link ${EXT_IF} ${GW_EXTIF} type macvlan
 ip link set ${GW_EXTIF} netns ${NS_NAME}
 
 # Replace the original MAC address
-ip link set ${EXT_IF} address ${RAND_MACADDR}
+ip link set ${EXT_IF} address ${HS_EXT_MACADDR}
 # Bring up the external interface
 ip link set ${EXT_IF} up
 

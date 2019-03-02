@@ -11,6 +11,7 @@
 
   - include_vars: 'vars/common.yml'
   - include_vars: 'vars/{{ansible_distribution}}.yml'
+  - include_vars: 'extra_hosts.yml'
 
   - name: Check Installed Mobula
     stat:

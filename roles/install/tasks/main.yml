@@ -23,7 +23,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0700
+    mode: 0755
 
 - name: Backup External Interface
   copy:
@@ -43,6 +43,7 @@
   with_items:
     - 'lib/start.sh'
     - 'lib/gateway.sh'
+    - 'lib/run_dns_server.sh'
 
 - name: Generate Mobula Configuration
   template:
@@ -54,7 +55,17 @@
   with_items:
     - 'templates/constants.conf'
     - 'templates/network.conf'
-    - 'templates/{{wireguard_interface}}.conf'
+    - 'templates/dnsmasq.conf'
+    - 'templates/hosts'
+    - 'templates/resolv.conf'
+
+- name: Generate WireGuard Configuration
+  template:
+    src: 'templates/wg0.conf'
+    dest: '{{install_dir}}/{{wireguard_interface}}.conf'
+    owner: root
+    group: root
+    mode: 0600
 
 - name: Try to Remove Old OVS Bridge
   openvswitch_bridge:

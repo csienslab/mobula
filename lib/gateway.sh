@@ -15,7 +15,7 @@ ip addr add ${GATEWAY_NET} dev ${GW_ACCIF}
 ip link set ${GW_ACCIF} up
 
 # Setup the external network
-ip link set ${GW_EXTIF} address ${EXT_MACADDR}
+ip link set ${GW_EXTIF} address ${GW_EXT_MACADDR}
 ip addr add ${EXT_NET} dev ${GW_EXTIF}
 ip link set ${GW_EXTIF} up
 ip route add default via ${EXT_GATEWAY}
@@ -31,7 +31,10 @@ iptables -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-dest
 iptables -t nat -A PREROUTING -i ${GW_WGIF} -p udp --dport 4789 -j DNAT --to-destination ${HS_DIRIF_IP}
 
 # Enhance the firewall
-# Only open WireGuard on the external interface
+iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+# Allow ping on the external interface
+iptables -A INPUT -i ${GW_EXTIF} -p icmp --icmp-type 8 -m conntrack --ctstate NEW -j ACCEPT
+# Open WireGuard on the external interface
 iptables -A INPUT -i ${GW_EXTIF} -p udp --dport 51820 -j ACCEPT
 iptables -A INPUT -i ${GW_EXTIF} -j DROP
 iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
@@ -44,6 +47,9 @@ ip6tables -A FORWARD -i ${GW_EXTIF} -j DROP
 
 # Setup WireGuard
 wg-quick up ${BASEDIR}/${GW_WGIF}.conf
+
+# Start DNS Server
+${BASEDIR}/run_dns_server.sh &
 
 # Test and update ARP of the external gateway
 ping -W 6 -c 10 ${EXT_GATEWAY} &

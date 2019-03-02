@@ -5,7 +5,7 @@
     dest: '{{install_dir}}/{{wireguard_interface}}.conf'
     owner: root
     group: root
-    mode: 0644
+    mode: 0600
 
 - name: Restart WireGuard
   shell: |
@@ -36,3 +36,18 @@
   when: item != inventory_hostname
   with_inventory_hostnames:
     - all
+
+- name: Generate DNS Configuration
+  template:
+    src: '{{item}}'
+    dest: '{{install_dir}}'
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 'templates/dnsmasq.conf'
+    - 'templates/hosts'
+    - 'templates/resolv.conf'
+
+- name: Restart DNS Server
+  shell: 'ip netns exec {{namespace_name}} {{install_dir}}/run_dns_server.sh'
