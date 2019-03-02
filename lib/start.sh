@@ -10,8 +10,8 @@ ip link del ${GW_ACCIF} 2>/dev/null
 ip link del ${OVS_ACCIF} 2>/dev/null
 ip link del ${HS_VETHIF} 2>/dev/null
 ip link del ${OVS_VETHIF} 2>/dev/null
-
-ip link del ${HOST_DIRIF} 2>/dev/null
+ip link del ${GW_DIRIF} 2>/dev/null
+ip link del ${HS_DIRIF} 2>/dev/null
 ip netns del ${NS_NAME} 2>/dev/null
 
 # Setup interfaces and namespaces
@@ -42,5 +42,13 @@ ip link set ${EXT_IF} up
 # Setup the gateway
 ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh
 
+# Setup the routing rules for the direct network
+ip route add table 29 default via ${GW_DIRIF_IP} dev ${HS_DIRIF}
+# Route all traffic from the direct ip to the direct network
+ip rule add from ${HS_DIRIF_IP}/32 table 29 priority 29
 # Route the WireGuard network to the direct network
-ip route add ${WG_SUBNET} via ${GW_DIRIF_IP} dev ${HS_DIRIF}
+ip rule add to ${WG_SUBNET} table 29 priority 30
+# Prevent the WireGuard network from going elsewhere
+ip rule add to ${WG_SUBNET} unreachable priority 31
+# Flush routing cache
+ip route flush cache
