@@ -22,13 +22,10 @@ ip link set ${GW_DIRIF} netns ${NS_NAME}
 ip addr add ${HS_DIRIF_IP}/31 dev ${HS_DIRIF}
 ip link set ${HS_DIRIF} up
 
+# Setup the access link
 ip link add ${OVS_ACCIF} type veth peer name ${GW_ACCIF}
 ip link set ${GW_ACCIF} netns ${NS_NAME}
 ip link set ${OVS_ACCIF} up
-
-ip link add ${HS_FACIF} type veth peer name ${OVS_FACIF}
-ip link set ${HS_FACIF} up
-ip link set ${OVS_FACIF} up
 
 # Duplicate the external interface
 ip link add link ${EXT_IF} ${HS_EXTIF} type macvlan
@@ -49,3 +46,10 @@ ip rule add to ${WG_SUBNET} table 29 priority 30
 ip rule add to ${WG_SUBNET} unreachable priority 31
 # Flush routing cache
 ip route flush cache
+
+# Setup the facade interface
+ip link add ${HS_FACIF} type veth peer name ${OVS_FACIF}
+ip addr add ${HS_FACIF_NET} dev ${HS_FACIF}
+ip link set ${HS_FACIF} up
+ip link set ${OVS_FACIF} up
+ip route add default via ${GATEWAY_IP}
