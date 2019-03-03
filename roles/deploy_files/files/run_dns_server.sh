@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-BASEDIR=$(cd "$(dirname \"$0\")" || pwd -P)
+BASEDIR=$(cd "$(dirname "$0")"; pwd -P)
 PID_FILE="${BASEDIR}/dnsmasq.pid"
 
 if [ -f "${PID_FILE}" ]; then
