@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source ${BASEDIR}/constants.conf
-source ${BASEDIR}/network.conf
+BASEDIR=$(dirname "$0")
+source ${BASEDIR}/config.conf
 
 # Bring up the loopback
 ip link set lo up
@@ -15,7 +15,7 @@ ip addr add ${GATEWAY_NET} dev ${GW_ACCIF}
 ip link set ${GW_ACCIF} up
 
 # Setup the external network
-ip link set ${GW_EXTIF} address ${GW_EXT_MACADDR}
+ip link set ${GW_EXTIF} address ${EXT_MACADDR}
 ip addr add ${EXT_NET} dev ${GW_EXTIF}
 ip link set ${GW_EXTIF} up
 ip route add default via ${EXT_GATEWAY}
@@ -48,8 +48,5 @@ ip6tables -A FORWARD -i ${GW_EXTIF} -j DROP
 # Setup WireGuard
 wg-quick up ${BASEDIR}/${GW_WGIF}.conf
 
-# Start DNS Server
+# Start the DNS Server
 ${BASEDIR}/run_dns_server.sh &
-
-# Test and update ARP of the external gateway
-ping -W 6 -c 10 ${EXT_GATEWAY} &

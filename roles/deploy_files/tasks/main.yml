@@ -1,0 +1,49 @@
+---
+- name: Create Mobula Directory
+  file:
+    path: '{{install_dir}}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Backup External Interface
+  copy:
+    content: '{{ext_net | to_json}}'
+    dest: '{{install_dir}}/extif.json'
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Copy Mobula Scripts
+  copy:
+    src: '{{item}}'
+    dest: '{{install_dir}}'
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - 'files/start.sh'
+    - 'files/gateway.sh'
+    - 'files/run_dns_server.sh'
+
+- name: Generate Mobula Configuration
+  template:
+    src: '{{item}}'
+    dest: '{{install_dir}}'
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 'files/config.conf'
+    - 'files/dnsmasq.conf'
+    - 'files/hosts'
+    - 'files/resolv.conf'
+
+- name: Generate WireGuard Configuration
+  template:
+    src: 'files/wireguard.conf'
+    dest: '{{install_dir}}/{{wireguard_iface}}.conf'
+    owner: root
+    group: root
+    mode: 0600

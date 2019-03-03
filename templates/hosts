@@ -1,6 +1,0 @@
-{% for ip in hostvars %}
-10.31.0.{{hostvars[ip].host_id * 2}} {{hostvars[ip].hostname}}
-{% endfor %}
-{% for ip in extra_hosts %}
-{{ip}} {{extra_hosts[ip]}}
-{% endfor %}

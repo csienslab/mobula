@@ -1,43 +1,47 @@
 ---
-# This playbook deploys Mobula network
+# This playbook deploys Mobula
 
 - hosts: all
   remote_user: root
   tasks:
-  - name: Check and Initialize
-    fail:
-      msg: 'Not supported OS: {{ansible_distribution}}'
-    when: ansible_distribution not in ['CentOS']
+    - name: Check and Initialize
+      fail:
+        msg: 'Not supported OS: {{ansible_distribution}}'
+      when: ansible_distribution not in ['CentOS']
 
-  - include_vars: 'vars/common.yml'
-  - include_vars: 'vars/{{ansible_distribution}}.yml'
-  - include_vars: 'extra_hosts.yml'
+    - include_vars: 'vars/common.yml'
+    - include_vars: 'vars/{{ansible_distribution}}.yml'
+    - include_vars: 'extra_hosts.yml'
 
-  - name: Check Installed Mobula
-    stat:
-      path: '{{install_dir}}'
-    register: mobula_install_result
+    - name: Check Installed Mobula
+      stat:
+        path: '{{install_dir}}'
+      register: mobula_install_result
+    
+    - name: Get External Interface
+      set_fact:
+        ext_net: '{{ansible_default_ipv4}}'
+      when: not mobula_install_result.stat.exists
+  
+    - name: Fetch External Interface
+      shell: 'cat {{install_dir}}/extif.json'
+      register: 'extif_json_result'
+      when: mobula_install_result.stat.exists
+  
+    - name: Load External Interface
+      set_fact:
+        ext_net: '{{extif_json_result.stdout | from_json}}'
+      when: mobula_install_result.stat.exists
 
-  - name: Get External Interface
-    set_fact:
-      ext_net: '{{ansible_default_ipv4}}'
-    when: not mobula_install_result.stat.exists
+    - name: Deploy Files
+      include_role:
+        name: deploy_files
 
-  - name: Fetch External Interface
-    shell: 'cat {{install_dir}}/extif.json'
-    register: 'extif_json_result'
-    when: mobula_install_result.stat.exists
+    - name: Install
+      include_role:
+        name: install
+      when: not mobula_install_result.stat.exists or reinstall is defined
 
-  - name: Load External Interface
-    set_fact:
-      ext_net: '{{extif_json_result.stdout | from_json}}'
-    when: mobula_install_result.stat.exists
-
-  - name: Install
-    include_role:
-      name: install
-    when: not mobula_install_result.stat.exists or reinstall is defined
-
-  - name: Configure
-    include_role:
-      name: configure
+    - name: Configure
+      include_role:
+        name: configure

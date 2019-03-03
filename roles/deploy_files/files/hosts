@@ -1,0 +1,7 @@
+{% for ip in hostvars %}
+{% set item = hostvars[ip] %}
+{{item.host_id | get_access_addr('host') | ipaddr('address')}} {{item.hostname}}
+{% endfor %}
+{% for ip in extra_hosts %}
+{{ip}} {{extra_hosts[ip]}}
+{% endfor %}

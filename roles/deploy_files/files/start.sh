@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 
-export BASEDIR=$(dirname "$0")
-source ${BASEDIR}/constants.conf
-source ${BASEDIR}/network.conf
+BASEDIR=$(dirname "$0")
+source ${BASEDIR}/config.conf
 
 # Clean the existed interfaces and namespaces
-ip link del ${GW_EXTIF} 2>/dev/null
+ip link del ${HS_EXTIF} 2>/dev/null
 ip link del ${GW_ACCIF} 2>/dev/null
 ip link del ${OVS_ACCIF} 2>/dev/null
-ip link del ${HS_VETHIF} 2>/dev/null
-ip link del ${OVS_VETHIF} 2>/dev/null
+ip link del ${OVS_FACIF} 2>/dev/null
+ip link del ${HS_FACIF} 2>/dev/null
 ip link del ${GW_DIRIF} 2>/dev/null
 ip link del ${HS_DIRIF} 2>/dev/null
 ip netns del ${NS_NAME} 2>/dev/null
@@ -27,17 +26,15 @@ ip link add ${OVS_ACCIF} type veth peer name ${GW_ACCIF}
 ip link set ${GW_ACCIF} netns ${NS_NAME}
 ip link set ${OVS_ACCIF} up
 
-ip link add ${HS_VETHIF} type veth peer name ${OVS_VETHIF}
-ip link set ${HS_VETHIF} up
-ip link set ${OVS_VETHIF} up
+ip link add ${HS_FACIF} type veth peer name ${OVS_FACIF}
+ip link set ${HS_FACIF} up
+ip link set ${OVS_FACIF} up
 
-ip link add link ${EXT_IF} ${GW_EXTIF} type macvlan
-ip link set ${GW_EXTIF} netns ${NS_NAME}
-
-# Replace the original MAC address
-ip link set ${EXT_IF} address ${HS_EXT_MACADDR}
-# Bring up the external interface
-ip link set ${EXT_IF} up
+# Duplicate the external interface
+ip link add link ${EXT_IF} ${HS_EXTIF} type macvlan
+# Move the original external interface into the namespace
+# EXT_IF == GW_EXTIF
+ip link set ${EXT_IF} netns ${NS_NAME}
 
 # Setup the gateway
 ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh

@@ -3,4 +3,7 @@ mark: mobula
 install_dir: '/opt/{{mark}}'
 namespace_name: '{{mark}}'
 ovs_bridge: 'ovsbr-{{mark}}'
-wireguard_interface: 'wg0'
+
+wireguard_iface: 'mo-wg-gw'
+ovs_access_iface: 'mo-acc-ovs'
+ovs_facade_iface: 'mo-fac-ovs'

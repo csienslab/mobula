@@ -17,56 +17,6 @@
     state: started
     enabled: yes
 
-- name: Create Mobula Directory
-  file:
-    path: '{{install_dir}}'
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
-- name: Backup External Interface
-  copy:
-    content: '{{ext_net | to_json}}'
-    dest: '{{install_dir}}/extif.json'
-    owner: root
-    group: root
-    mode: 0644
-
-- name: Copy Mobula Scripts
-  copy:
-    src: '{{item}}'
-    dest: '{{install_dir}}'
-    owner: root
-    group: root
-    mode: 0755
-  with_items:
-    - 'lib/start.sh'
-    - 'lib/gateway.sh'
-    - 'lib/run_dns_server.sh'
-
-- name: Generate Mobula Configuration
-  template:
-    src: '{{item}}'
-    dest: '{{install_dir}}'
-    owner: root
-    group: root
-    mode: 0644
-  with_items:
-    - 'templates/constants.conf'
-    - 'templates/network.conf'
-    - 'templates/dnsmasq.conf'
-    - 'templates/hosts'
-    - 'templates/resolv.conf'
-
-- name: Generate WireGuard Configuration
-  template:
-    src: 'templates/wg0.conf'
-    dest: '{{install_dir}}/{{wireguard_interface}}.conf'
-    owner: root
-    group: root
-    mode: 0600
-
 - name: Try to Remove Old OVS Bridge
   openvswitch_bridge:
     bridge: '{{ovs_bridge}}'
@@ -85,19 +35,8 @@
     port: '{{item}}'
     state: present
   with_items:
-    - '{{ovs_access_interface}}'
-    - '{{ovs_veth_interface}}'
-
-- name: Setup Network Configuration
-  include_tasks: 'networks/{{ansible_distribution}}.yml'
-
-- name: Copy Mobula Service
-  template:
-    src: 'templates/mobula.service'
-    dest: '/etc/systemd/system'
-    owner: root
-    group: root
-    mode: 0644
+    - '{{ovs_access_iface}}'
+    - '{{ovs_facade_iface}}'
 
 - name: Enable Mobula Service
   systemd:
