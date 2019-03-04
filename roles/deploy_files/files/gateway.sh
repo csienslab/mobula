@@ -23,29 +23,29 @@ ip route add default via ${EXT_GATEWAY}
 # Setup the iptables and enable forwarding
 echo 1 > /proc/sys/net/ipv4/ip_forward
 # General NAT
-iptables -t nat -A POSTROUTING -o ${GW_EXTIF} -j MASQUERADE
-iptables -t nat -A POSTROUTING -o ${GW_WGIF} -j MASQUERADE
+iptables -w 10 -t nat -A POSTROUTING -o ${GW_EXTIF} -j MASQUERADE
+iptables -w 10 -t nat -A POSTROUTING -o ${GW_WGIF} -j MASQUERADE
 # ExtraWire NAT
-iptables -t nat -A POSTROUTING -s ${EW_SUBNET} -o ${GW_ACCIF} -j MASQUERADE
+iptables -w 10 -t nat -A POSTROUTING -s ${EW_SUBNET} -o ${GW_ACCIF} -j MASQUERADE
 # SSH forwarding
-iptables -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${HS_DIRIF_IP}
+iptables -w 10 -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${HS_DIRIF_IP}
 # VXLAN forwarding
-iptables -t nat -A PREROUTING -i ${GW_WGIF} -p udp --dport 4789 -j DNAT --to-destination ${HS_DIRIF_IP}
+iptables -w 10 -t nat -A PREROUTING -i ${GW_WGIF} -p udp --dport 4789 -j DNAT --to-destination ${HS_DIRIF_IP}
 
 # Enhance the firewall
-iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+iptables -w 10 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 # Allow ping on the external interface
-iptables -A INPUT -i ${GW_EXTIF} -p icmp --icmp-type 8 -m conntrack --ctstate NEW -j ACCEPT
+iptables -w 10 -A INPUT -i ${GW_EXTIF} -p icmp --icmp-type 8 -m conntrack --ctstate NEW -j ACCEPT
 # Open WireGuard on the external interface
-iptables -A INPUT -i ${GW_EXTIF} -p udp --dport 51820 -j ACCEPT
-iptables -A INPUT -i ${GW_EXTIF} -j DROP
-iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+iptables -w 10 -A INPUT -i ${GW_EXTIF} -p udp --dport 51820 -j ACCEPT
+iptables -w 10 -A INPUT -i ${GW_EXTIF} -j DROP
+iptables -w 10 -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 # Only forward SSH from the external interface
-iptables -A FORWARD -i ${GW_EXTIF} -p tcp --dport 22 -j ACCEPT
-iptables -A FORWARD -i ${GW_EXTIF} -j DROP
+iptables -w 10 -A FORWARD -i ${GW_EXTIF} -p tcp --dport 22 -j ACCEPT
+iptables -w 10 -A FORWARD -i ${GW_EXTIF} -j DROP
 # Block all IPv6 traffic from the external interface
-ip6tables -A INPUT -i ${GW_EXTIF} -j DROP
-ip6tables -A FORWARD -i ${GW_EXTIF} -j DROP
+ip6tables -w 10 -A INPUT -i ${GW_EXTIF} -j DROP
+ip6tables -w 10 -A FORWARD -i ${GW_EXTIF} -j DROP
 
 # Setup WireGuard
 wg-quick up ${BASEDIR}/${GW_WGIF}.conf
