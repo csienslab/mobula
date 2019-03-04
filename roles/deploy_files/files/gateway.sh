@@ -25,6 +25,8 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 # General NAT
 iptables -t nat -A POSTROUTING -o ${GW_EXTIF} -j MASQUERADE
 iptables -t nat -A POSTROUTING -o ${GW_WGIF} -j MASQUERADE
+# ExtraWire NAT
+iptables -t nat -A POSTROUTING -s ${EW_SUBNET} -o ${GW_ACCIF} -j MASQUERADE
 # SSH forwarding
 iptables -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${HS_DIRIF_IP}
 # VXLAN forwarding
