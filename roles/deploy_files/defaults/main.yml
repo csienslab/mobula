@@ -4,7 +4,7 @@ wireguard_addr: '{{host_id | get_wireguard_addr}}'
 gateway_access_iface: 'mo-acc-gw'
 gateway_access_addr: '{{host_id | get_access_addr("gateway")}}'
 
-host_facade_iface: 'veth_fac'
+host_facade_iface: 'veth_fac0'
 host_facade_addr: '{{host_id | get_access_addr("host")}}'
 
 gateway_direct_iface: 'mo-dir-gw'

@@ -47,3 +47,11 @@
     owner: root
     group: root
     mode: 0600
+
+- name: Copy Mobula Service
+  template:
+    src: 'files/mobula.service'
+    dest: '/etc/systemd/system'
+    owner: root
+    group: root
+    mode: 0644

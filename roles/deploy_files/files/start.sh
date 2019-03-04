@@ -49,7 +49,5 @@ ip route flush cache
 
 # Setup the facade interface
 ip link add ${HS_FACIF} type veth peer name ${OVS_FACIF}
-ip addr add ${HS_FACIF_NET} dev ${HS_FACIF}
 ip link set ${HS_FACIF} up
 ip link set ${OVS_FACIF} up
-ip route add default via ${GATEWAY_IP}
