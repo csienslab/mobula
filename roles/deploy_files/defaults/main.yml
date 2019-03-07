@@ -1,6 +1,5 @@
 ---
 wireguard_addr: '{{host_id | get_wireguard_addr}}'
-extrawire_addr: '{{host_id | get_extrawire_addr}}'
 
 gateway_access_iface: 'mo-acc-gw'
 gateway_access_addr: '{{host_id | get_access_addr("gateway")}}'
