@@ -1,7 +1,7 @@
 - name: Restart WireGuard
   shell: |
-    ip netns exec {{namespace_name}} wg-quick down {{install_dir}}/{{wireguard_iface}}.conf
-    ip netns exec {{namespace_name}} wg-quick up {{install_dir}}/{{wireguard_iface}}.conf
+    wg-quick down {{install_dir}}/{{wireguard_iface}}.conf
+    wg-quick up {{install_dir}}/{{wireguard_iface}}.conf
 
 - name: List OVS Ports
   shell: 'ovs-vsctl list-ports {{ovs_bridge}}'
@@ -12,18 +12,19 @@
     bridge: '{{ovs_bridge}}'
     port: '{{item}}'
     state: 'absent'
-  when: item is match(vxlan_tunnel_prefix + '*')
+  when: item is match(geneve_tunnel_prefix + '*')
   with_items:
     - '{{port_list_result.stdout_lines}}'
 
 - name: Create OVS Tunnels
   openvswitch_port:
     bridge: '{{ovs_bridge}}'
-    port: '{{vxlan_tunnel_prefix}}{{hostvars[item].host_id}}'
+    port: '{{geneve_tunnel_prefix}}{{hostvars[item].host_id}}'
     state: 'present'
     set: >
-      interface {{vxlan_tunnel_prefix}}{{hostvars[item].host_id}}
-      type=vxlan options:remote_ip={{hostvars[item].host_id | get_wireguard_addr | ipaddr('address')}}
+      interface {{geneve_tunnel_prefix}}{{hostvars[item].host_id}} type=geneve
+      options:remote_ip={{hostvars[item].host_id | get_wireguard_addr | ipaddr('address')}}
+      options:key={{geneve_tunnel_key}}
   when: item != inventory_hostname
   with_inventory_hostnames:
     - all

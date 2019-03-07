@@ -14,9 +14,9 @@ class FilterModule(object):
             return '10.31.{}.{}/16'.format((value & 0xFF00)>>8, (value & 0xFF))
 
         if typ == 'gateway':
-            return _gen(host_id * 2 + 1)
+            return _gen(host_id)
         elif typ == 'host':
-            return _gen(host_id * 2)
+            return _gen(host_id | 0x8000)
         else:
             raise Exception()
 

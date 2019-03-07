@@ -37,13 +37,21 @@ ip link set ${EXT_IF} netns ${NS_NAME}
 ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh
 
 # Setup the routing rules for the direct network
-ip route add table 29 default via ${GW_DIRIF_IP} dev ${HS_DIRIF}
+ip route add table 20 default via ${GW_DIRIF_IP} dev ${HS_DIRIF}
 # Route all traffic from the direct ip to the direct network
-ip rule add from ${HS_DIRIF_IP}/32 table 29 priority 29
+ip rule add from ${HS_DIRIF_IP} table 20 priority 10
 # Route the WireGuard network to the direct network
-ip rule add to ${WG_SUBNET} table 29 priority 30
-# Prevent the WireGuard network from going elsewhere
-ip rule add to ${WG_SUBNET} unreachable priority 31
+ip rule add fwmark 0x573 table 20 priority 11
+# Flush routing cache
+ip route flush cache
+
+# Enable the ARP filter
+echo 1 > /proc/sys/net/ipv4/conf/all/arp_filter
+# Setup WireGuard
+wg-quick up ${BASEDIR}/${HS_WGIF}.conf
+# Setup the fast path
+ip route add table 21 ${HS_SUBNET} dev ${HS_WGIF} src ${HS_FACIF_IP}
+ip rule add table 21 priority 12
 # Flush routing cache
 ip route flush cache
 
