@@ -49,8 +49,8 @@ ip route flush cache
 echo 1 > /proc/sys/net/ipv4/conf/all/arp_filter
 # Setup the fast path table
 ip route add table 21 blackhole default
-ip rule add to ${HS_SUBNET} table 21 priority 12
-ip rule add to ${WG_SUBNET} table 21 priority 13
+ip rule add to ${WG_SUBNET} table 21 priority 12
+ip rule add to ${HS_SUBNET} table 21 priority 13
 # Setup WireGuard
 wg-quick up ${BASEDIR}/${HS_WGIF}.conf
 # Flush routing cache
