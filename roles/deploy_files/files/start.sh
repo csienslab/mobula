@@ -42,6 +42,9 @@ ip route add table 20 default via ${GW_DIRIF_IP} dev ${HS_DIRIF}
 ip rule add from ${HS_DIRIF_IP} table 20 priority 10
 # Route the WireGuard network to the direct network
 ip rule add fwmark 0x573 table 20 priority 11
+# Route the WireGuard network to the WireGuard interface
+ip route add table 21 default dev ${HS_WGIF}
+ip rule add to ${WG_SUBNET} table 21 priority 12
 # Flush routing cache
 ip route flush cache
 
