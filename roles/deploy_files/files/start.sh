@@ -45,17 +45,11 @@ ip rule add fwmark 0x573 table 20 priority 11
 # Flush routing cache
 ip route flush cache
 
-# Enable the ARP filter
-echo 1 > /proc/sys/net/ipv4/conf/all/arp_filter
-# Setup the fast path table
-ip rule add to ${HS_SUBNET} table 21 priority 12
 # Setup WireGuard
 wg-quick up ${BASEDIR}/${HS_WGIF}.conf
-# Flush routing cache
-ip route flush cache
 
 # Setup the facade interface
 ip link add ${HS_FACIF} type veth peer name ${OVS_FACIF}
-ip link set ${HS_FACIF} mtu 1370
+ip link set ${HS_FACIF} mtu ${MTU}
 ip link set ${HS_FACIF} up
 ip link set ${OVS_FACIF} up

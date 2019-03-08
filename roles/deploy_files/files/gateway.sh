@@ -13,7 +13,7 @@ ip link set ${GW_DIRIF} up
 
 # Setup the access network
 ip addr add ${GATEWAY_NET} dev ${GW_ACCIF}
-ip link set ${GW_ACCIF} mtu 1370
+ip link set ${GW_ACCIF} mtu ${MTU}
 ip link set ${GW_ACCIF} up
 
 # Setup the external network
