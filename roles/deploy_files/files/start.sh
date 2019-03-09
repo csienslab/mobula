@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 BASEDIR=$(dirname "$0")
-source ${BASEDIR}/config.conf
+source ${BASEDIR}/network.conf
 
 # Clean the existed interfaces and namespaces
 ip link del ${HS_EXTIF} 2>/dev/null
@@ -19,7 +19,8 @@ ip netns add ${NS_NAME}
 # Setup the direct network
 ip link add ${GW_DIRIF} type veth peer name ${HS_DIRIF}
 ip link set ${GW_DIRIF} netns ${NS_NAME}
-ip addr add ${HS_DIRIF_IP}/31 dev ${HS_DIRIF}
+ip addr add ${HS_DIRIF_NET} dev ${HS_DIRIF}
+ip link set ${GW_DIRIF} mtu ${WG_MTU}
 ip link set ${HS_DIRIF} up
 
 # Setup the access link
@@ -37,21 +38,14 @@ ip link set ${EXT_IF} netns ${NS_NAME}
 ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh
 
 # Setup the routing rules for the direct network
-ip route add table 20 default via ${GW_DIRIF_IP} dev ${HS_DIRIF}
+ip route add table 10 default via ${GW_DIRIF_IP} dev ${HS_DIRIF}
 # Route all traffic from the direct ip to the direct network
-ip rule add from ${HS_DIRIF_IP} table 20 priority 10
-# Route the WireGuard network to the direct network
-ip rule add fwmark 0x573 table 20 priority 11
-# Route the WireGuard network to the WireGuard interface
-ip rule add table 21 priority 12
+ip rule add from ${HS_DIRIF_IP} table 10 priority 10
 # Flush routing cache
 ip route flush cache
 
-# Setup WireGuard
-wg-quick up ${BASEDIR}/${HS_WGIF}.conf
-
 # Setup the facade interface
 ip link add ${HS_FACIF} type veth peer name ${OVS_FACIF}
-ip link set ${HS_FACIF} mtu ${MTU}
+ip link set ${HS_FACIF} mtu ${ACC_MTU}
 ip link set ${HS_FACIF} up
 ip link set ${OVS_FACIF} up

@@ -35,7 +35,7 @@
     group: root
     mode: 0644
   with_items:
-    - 'files/config.conf'
+    - 'files/network.conf'
     - 'files/dnsmasq.conf'
     - 'files/hosts'
     - 'files/resolv.conf'
