@@ -12,6 +12,7 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 # General NAT
 iptables -w ${TIMEOUT} -t nat -A POSTROUTING -o ${GW_EXTIF} -j MASQUERADE
 iptables -w ${TIMEOUT} -t nat -A POSTROUTING -s ${WG_SUBNET} -o ${GW_ACCIF} -j MASQUERADE
+iptables -w ${TIMEOUT} -t nat -A POSTROUTING -d ${IWG_SUBNET} -o ${GW_WGIF} -j SNAT --to-source ${HS_DIRIF_IP}
 # SSH forwarding
 iptables -w ${TIMEOUT} -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${HS_DIRIF_IP}
 # Enhance the firewall
@@ -23,11 +24,11 @@ iptables -w ${TIMEOUT} -A INPUT -i ${GW_EXTIF} -j DROP
 # Stateful forwarding
 iptables -w ${TIMEOUT} -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 # Allowed forwarding paths
-iptables -w ${TIMEOUT} -A FORWARD -i ${GW_ACCIF} -o ${GW_EXTIF} -j ACCEPT
-iptables -w ${TIMEOUT} -A FORWARD -i ${GW_DIRIF} -o ${GW_EXTIF} -j ACCEPT
+iptables -w ${TIMEOUT} -A FORWARD -i ${GW_ACCIF} -j ACCEPT
 iptables -w ${TIMEOUT} -A FORWARD -i ${GW_DIRIF} -o ${GW_WGIF} -j ACCEPT
 iptables -w ${TIMEOUT} -A FORWARD -i ${GW_WGIF} -o ${GW_DIRIF} -j ACCEPT
 iptables -w ${TIMEOUT} -A FORWARD -i ${GW_WGIF} -o ${GW_ACCIF} -j ACCEPT
+iptables -w ${TIMEOUT} -A FORWARD -i ${GW_WGIF} -o ${GW_WGIF} -j ACCEPT
 # Only forward SSH and WireGuard from the external interface
 iptables -w ${TIMEOUT} -A FORWARD -i ${GW_EXTIF} -o ${GW_DIRIF} -p tcp --dport 22 -j ACCEPT
 iptables -w ${TIMEOUT} -A FORWARD -j DROP
