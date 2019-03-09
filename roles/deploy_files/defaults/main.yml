@@ -1,6 +1,5 @@
 ---
 wireguard_addr: '{{host_id | get_wireguard_addr}}'
-wireguard_local_addr: '{{wireguard_addr | ipaddr("32767")}}'
 
 gateway_access_iface: 'mo-acc-gw'
 gateway_access_addr: '{{host_id | get_access_addr("gateway")}}'

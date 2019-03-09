@@ -11,6 +11,7 @@ ip link set lo up
 echo 1 > /proc/sys/net/ipv4/ip_forward
 # General NAT
 iptables -w ${TIMEOUT} -t nat -A POSTROUTING -o ${GW_EXTIF} -j MASQUERADE
+iptables -w ${TIMEOUT} -t nat -A POSTROUTING -s ${WG_SUBNET} -o ${GW_ACCIF} -j MASQUERADE
 # SSH forwarding
 iptables -w ${TIMEOUT} -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${HS_DIRIF_IP}
 # Enhance the firewall
@@ -36,7 +37,7 @@ ip6tables -w ${TIMEOUT} -A OUTPUT -j DROP
 ip6tables -w ${TIMEOUT} -A FORWARD -j DROP
 
 # Setup the direct network
-ip addr add ${GW_DIRIF_NET} dev ${GW_DIRIF} noprefixroute
+ip addr add ${GW_DIRIF_IP} dev ${GW_DIRIF}
 ip link set ${GW_DIRIF} mtu ${WG_MTU}
 ip link set ${GW_DIRIF} up
 ip route add ${HS_DIRIF_IP} dev ${GW_DIRIF}

@@ -19,8 +19,8 @@ ip netns add ${NS_NAME}
 # Setup the direct network
 ip link add ${GW_DIRIF} type veth peer name ${HS_DIRIF}
 ip link set ${GW_DIRIF} netns ${NS_NAME}
-ip addr add ${HS_DIRIF_NET} dev ${HS_DIRIF}
-ip link set ${GW_DIRIF} mtu ${WG_MTU}
+ip addr add ${HS_DIRIF_IP} dev ${HS_DIRIF}
+ip link set ${HS_DIRIF} mtu ${WG_MTU}
 ip link set ${HS_DIRIF} up
 
 # Setup the access link
@@ -38,9 +38,11 @@ ip link set ${EXT_IF} netns ${NS_NAME}
 ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh
 
 # Setup the routing rules for the direct network
+ip route add ${GW_DIRIF_IP} dev ${HS_DIRIF}
 ip route add table 10 default via ${GW_DIRIF_IP} dev ${HS_DIRIF}
 # Route all traffic from the direct ip to the direct network
 ip rule add from ${HS_DIRIF_IP} table 10 priority 10
+ip rule add to ${WG_SUBNET} table 10 priority 11
 # Flush routing cache
 ip route flush cache
 

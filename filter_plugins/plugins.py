@@ -6,8 +6,8 @@ class FilterModule(object):
         }
 
     def _check_host_id(self, host_id):
-        # host_id should be less than 32767 to reserve the last ip
-        return host_id < 32767
+        # host_id should be greater than 0 and less than 32768
+        return 0 < host_id < 32768
 
     def get_access_addr(self, host_id, typ):
         assert self._check_host_id(host_id)
