@@ -4,6 +4,7 @@ BASEDIR=$(dirname "$0")
 source ${BASEDIR}/network.conf
 
 # Clean the existed interfaces and namespaces
+ip link del ${GW_MIDIF} 2>/dev/null
 ip link del ${HS_EXTIF} 2>/dev/null
 ip link del ${GW_ACCIF} 2>/dev/null
 ip link del ${OVS_ACCIF} 2>/dev/null
@@ -29,10 +30,10 @@ ip link set ${GW_ACCIF} netns ${NS_NAME}
 ip link set ${OVS_ACCIF} up
 
 # Duplicate the external interface
-ip link add link ${EXT_IF} ${HS_EXTIF} type macvlan
-# Move the original external interface into the namespace
-# EXT_IF == GW_EXTIF
+ip link add ${HS_EXTIF} type veth peer name ${GW_MIDIF}
+# Move the original external and the middle interface into the namespace
 ip link set ${EXT_IF} netns ${NS_NAME}
+ip link set ${GW_MIDIF} netns ${NS_NAME}
 
 # Setup the gateway
 ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh
