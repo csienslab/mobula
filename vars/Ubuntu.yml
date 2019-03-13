@@ -1,0 +1,5 @@
+---
+pkgs_iproute2: iproute2
+pkgs_openvswitch: openvswitch-switch
+pkgs_dnsmasq: dnsmasq
+service_openvswitch: openvswitch-switch
