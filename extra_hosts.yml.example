@@ -1,0 +1,2 @@
+extra_hosts:
+  10.31.0.3: 'charlie.example.com'

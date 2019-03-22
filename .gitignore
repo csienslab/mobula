@@ -1,5 +1,6 @@
 hosts.yml
 extra_hosts.yml
+extra_wires.yml
 *.retry
 
 # Byte-compiled / optimized / DLL files
