@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-TIMEOUT=10
-BASEDIR=$(dirname "$0")
+BASEDIR=$(cd "$(dirname "$0")"; pwd -P)
+source ${BASEDIR}/constants.conf
 source ${BASEDIR}/network.conf
+TIMEOUT=10
 
 # Bring up the loopback
 ip link set lo up
@@ -11,10 +12,12 @@ ip link set lo up
 echo 1 > /proc/sys/net/ipv4/ip_forward
 # General NAT
 iptables -w ${TIMEOUT} -t nat -A POSTROUTING -o ${GW_EXTIF} -j MASQUERADE
-iptables -w ${TIMEOUT} -t nat -A POSTROUTING -s ${WG_SUBNET} -o ${GW_ACCIF} -j MASQUERADE
+iptables -w ${TIMEOUT} -t nat -A POSTROUTING -s ${WG_SUBNET} -o ${OVS_BR} -j MASQUERADE
 iptables -w ${TIMEOUT} -t nat -A POSTROUTING -d ${IWG_SUBNET} -o ${GW_WGIF} -j SNAT --to-source ${HS_DIRIF_IP}
 # SSH forwarding
 iptables -w ${TIMEOUT} -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${HS_DIRIF_IP}
+# Geneve forwarding
+iptables -w ${TIMEOUT} -t nat -A PREROUTING -i ${GW_WGIF} -p udp --dport 6081 -j DNAT --to-destination ${GW_DIRIF_IP}
 # Enhance the firewall
 iptables -w ${TIMEOUT} -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 # Allow ping and WireGuard on the external interface
@@ -24,10 +27,10 @@ iptables -w ${TIMEOUT} -A INPUT -i ${GW_EXTIF} -j DROP
 # Stateful forwarding
 iptables -w ${TIMEOUT} -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 # Allowed forwarding paths
-iptables -w ${TIMEOUT} -A FORWARD -i ${GW_ACCIF} -j ACCEPT
+iptables -w ${TIMEOUT} -A FORWARD -i ${OVS_BR} -j ACCEPT
 iptables -w ${TIMEOUT} -A FORWARD -i ${GW_DIRIF} -o ${GW_WGIF} -j ACCEPT
 iptables -w ${TIMEOUT} -A FORWARD -i ${GW_WGIF} -o ${GW_DIRIF} -j ACCEPT
-iptables -w ${TIMEOUT} -A FORWARD -i ${GW_WGIF} -o ${GW_ACCIF} -j ACCEPT
+iptables -w ${TIMEOUT} -A FORWARD -i ${GW_WGIF} -o ${OVS_BR} -j ACCEPT
 iptables -w ${TIMEOUT} -A FORWARD -i ${GW_WGIF} -o ${GW_WGIF} -j ACCEPT
 # Only forward SSH and WireGuard from the external interface
 iptables -w ${TIMEOUT} -A FORWARD -i ${GW_EXTIF} -o ${GW_DIRIF} -p tcp --dport 22 -j ACCEPT
@@ -43,11 +46,6 @@ ip link set ${GW_DIRIF} mtu ${WG_MTU}
 ip link set ${GW_DIRIF} up
 ip route add ${HS_DIRIF_IP} dev ${GW_DIRIF}
 
-# Setup the access network
-ip addr add ${GATEWAY_NET} dev ${GW_ACCIF}
-ip link set ${GW_ACCIF} mtu ${ACC_MTU}
-ip link set ${GW_ACCIF} up
-
 # Setup the external network
 ip link add name ${GW_EXTIF} type bridge
 ip link set ${EXT_IF} master ${GW_EXTIF}
@@ -59,8 +57,20 @@ ip link set ${GW_MIDIF} up
 ip link set ${GW_EXTIF} up
 ip route add default via ${EXT_GATEWAY}
 
-# Setup WireGuard
-wg-quick up ${BASEDIR}/${GW_WGIF}.conf
+# Setup up the facade interface
+ip link set ${OVS_FACIF} mtu ${ACC_MTU}
+ip link set ${OVS_FACIF} up
 
-# Start the DNS Server
-${BASEDIR}/run_dns_server.sh &
+# Setup WireGuard
+${BASEDIR}/wg_quick_wrapper.sh up ${BASEDIR}/${GW_WGIF}.conf
+
+# Start the DNS server
+${BASEDIR}/run_dns_server.sh
+
+# Start Open vSwitch
+${BASEDIR}/run_ovs.sh
+
+# Setup the access network
+ip addr add ${GATEWAY_NET} dev ${OVS_BR}
+ip link set ${OVS_BR} mtu ${ACC_MTU}
+ip link set ${OVS_BR} up

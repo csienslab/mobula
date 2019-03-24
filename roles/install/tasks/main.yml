@@ -11,33 +11,6 @@
 - name: Install WireGuard
   include_tasks: 'wireguard/{{ansible_distribution}}.yml'
 
-- name: Enable Services
-  systemd:
-    name: '{{service_openvswitch}}'
-    state: started
-    enabled: yes
-
-- name: Try to Remove Old OVS Bridge
-  openvswitch_bridge:
-    bridge: '{{ovs_bridge}}'
-    state: absent
-  ignore_errors: yes
-
-- name: Create OVS Bridge
-  openvswitch_bridge:
-    bridge: '{{ovs_bridge}}'
-    set: 'bridge {{ovs_bridge}} stp_enable=true'
-    state: present
-
-- name: Attach Interfaces to OVS
-  openvswitch_port:
-    bridge: '{{ovs_bridge}}'
-    port: '{{item}}'
-    state: present
-  with_items:
-    - '{{ovs_access_iface}}'
-    - '{{ovs_facade_iface}}'
-
 - name: Enable Mobula Service
   systemd:
     name: 'mobula'

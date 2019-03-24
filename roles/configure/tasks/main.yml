@@ -1,33 +1,28 @@
 - name: Restart WireGuard
   shell: |
-    ip netns exec {{namespace_name}} wg-quick down {{install_dir}}/{{wireguard_iface}}.conf
-    ip netns exec {{namespace_name}} wg-quick up {{install_dir}}/{{wireguard_iface}}.conf
+    {{install_dir}}/wg_quick_wrapper.sh down {{install_dir}}/{{wireguard_iface}}.conf
+    {{install_dir}}/wg_quick_wrapper.sh up {{install_dir}}/{{wireguard_iface}}.conf
 
 - name: List OVS Ports
-  shell: 'ovs-vsctl list-ports {{ovs_bridge}}'
+  shell: '{{install_dir}}/ovs_vsctl_wrapper.sh list-ports {{ovs_bridge}}'
   register: port_list_result
 
 - name: Clean OVS Tunnels
-  openvswitch_port:
-    bridge: '{{ovs_bridge}}'
-    port: '{{item}}'
-    state: 'absent'
+  shell: '{{install_dir}}/ovs_vsctl_wrapper.sh del-port {{ovs_bridge}} {{item}}'
   when: item is match(geneve_tunnel_prefix + '*')
   with_items:
     - '{{port_list_result.stdout_lines}}'
 
 - name: Create OVS Tunnels
-  openvswitch_port:
-    bridge: '{{ovs_bridge}}'
-    port: '{{geneve_tunnel_prefix}}{{hostvars[item].host_id}}'
-    state: 'present'
-    set: >
-      interface {{geneve_tunnel_prefix}}{{hostvars[item].host_id}} type=geneve
-      options:remote_ip={{hostvars[item].host_id | get_wireguard_addr | ipaddr('address')}}
-      options:key={{geneve_tunnel_key}}
+  shell: >
+    {{install_dir}}/ovs_vsctl_wrapper.sh add-port {{ovs_bridge}}
+    {{geneve_tunnel_prefix}}{{hostvars[item].host_id}}
+    -- set interface {{geneve_tunnel_prefix}}{{hostvars[item].host_id}} type=geneve
+    options:remote_ip={{hostvars[item].host_id | get_wireguard_addr | ipaddr('address')}}
+    options:key={{geneve_tunnel_key}}
   when: item != inventory_hostname
   with_inventory_hostnames:
     - all
 
 - name: Restart DNS Server
-  shell: 'ip netns exec {{namespace_name}} {{install_dir}}/run_dns_server.sh'
+  shell: '{{install_dir}}/run_dns_server.sh'

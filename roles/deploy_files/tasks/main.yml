@@ -23,9 +23,12 @@
     group: root
     mode: 0755
   with_items:
-    - 'files/start.sh'
     - 'files/gateway.sh'
+    - 'files/ovs_vsctl_wrapper.sh'
     - 'files/run_dns_server.sh'
+    - 'files/run_ovs.sh'
+    - 'files/start.sh'
+    - 'files/wg_quick_wrapper.sh'
 
 - name: Generate Mobula Configuration
   template:
@@ -35,9 +38,10 @@
     group: root
     mode: 0644
   with_items:
-    - 'files/network.conf'
+    - 'files/constants.conf'
     - 'files/dnsmasq.conf'
     - 'files/hosts'
+    - 'files/network.conf'
     - 'files/resolv.conf'
 
 - name: Generate WireGuard Configuration
