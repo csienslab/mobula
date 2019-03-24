@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-BASEDIR=$(cd "$(dirname "$0")"; pwd -P)
-source ${BASEDIR}/constants.conf
-source ${BASEDIR}/network.conf
+BASE_DIR=$(cd "$(dirname "$0")"; pwd -P)
+source ${BASE_DIR}/constants.conf
+source ${BASE_DIR}/network.conf
 
 # Clean the existed interfaces and namespaces
 ip link del ${GW_MIDIF} 2>/dev/null
@@ -36,7 +36,7 @@ ip link set ${HS_FACIF} mtu ${ACC_MTU}
 ip link set ${HS_FACIF} up
 
 # Setup the gateway
-ip netns exec ${NS_NAME} ${BASEDIR}/gateway.sh
+ip netns exec ${NS_NAME} ${BASE_DIR}/gateway.sh
 
 # Setup the routing rules for the direct network
 ip route add ${GW_DIRIF_IP} dev ${HS_DIRIF}

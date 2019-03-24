@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 
-BASEDIR=$(cd "$(dirname "$0")"; pwd -P)
-source ${BASEDIR}/constants.conf
+BASE_DIR=$(cd "$(dirname "$0")"; pwd -P)
+source ${BASE_DIR}/constants.conf
 PID_FILE="${RUN_DIR}/dnsmasq.pid"
 
-if [ -f "${PID_FILE}" ]; then
+if [ -f "${PID_FILE}" ] && [ "$1" = "restart" ]; then
   PID=$(cat "${PID_FILE}")
   while kill -TERM "${PID}"; do
     sleep 1
   done
-  rm -f "${PID_FILE}"
 fi
 
 ip netns exec ${NS_NAME} dnsmasq -x "${PID_FILE}" \
-    --conf-file="${BASEDIR}/dnsmasq.conf" \
-    --addn-hosts="${BASEDIR}/hosts" \
-    --resolv-file="${BASEDIR}/resolv.conf" \
+    --conf-file="${DATA_DIR}/dnsmasq.conf" \
+    --addn-hosts="${DATA_DIR}/hosts" \
+    --resolv-file="${DATA_DIR}/resolv.conf" \
     --log-facility=/dev/null

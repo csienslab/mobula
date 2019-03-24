@@ -1,7 +1,5 @@
 - name: Restart WireGuard
-  shell: |
-    {{install_dir}}/wg_quick_wrapper.sh down {{install_dir}}/{{wireguard_iface}}.conf
-    {{install_dir}}/wg_quick_wrapper.sh up {{install_dir}}/{{wireguard_iface}}.conf
+  shell: '{{install_dir}}/run_wireguard.sh'
 
 - name: List OVS Ports
   shell: '{{install_dir}}/ovs_vsctl_wrapper.sh list-ports {{ovs_bridge}}'
@@ -19,10 +17,11 @@
     {{geneve_tunnel_prefix}}{{hostvars[item].host_id}}
     -- set interface {{geneve_tunnel_prefix}}{{hostvars[item].host_id}} type=geneve
     options:remote_ip={{hostvars[item].host_id | get_wireguard_addr | ipaddr('address')}}
+    options:dst_port=6254
     options:key={{geneve_tunnel_key}}
   when: item != inventory_hostname
   with_inventory_hostnames:
     - all
 
 - name: Restart DNS Server
-  shell: '{{install_dir}}/run_dns_server.sh'
+  shell: '{{install_dir}}/run_dns_server.sh restart'

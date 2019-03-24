@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-BASEDIR=$(cd "$(dirname "$0")"; pwd -P)
-source ${BASEDIR}/constants.conf
-source ${BASEDIR}/network.conf
+BASE_DIR=$(cd "$(dirname "$0")"; pwd -P)
+source ${BASE_DIR}/constants.conf
+source ${BASE_DIR}/network.conf
 TIMEOUT=10
 
 # Bring up the loopback
@@ -17,7 +17,7 @@ iptables -w ${TIMEOUT} -t nat -A POSTROUTING -d ${IWG_SUBNET} -o ${GW_WGIF} -j S
 # SSH forwarding
 iptables -w ${TIMEOUT} -t nat -A PREROUTING -i ${GW_EXTIF} -p tcp --dport 22 -j DNAT --to-destination ${HS_DIRIF_IP}
 # Geneve forwarding
-iptables -w ${TIMEOUT} -t nat -A PREROUTING -i ${GW_WGIF} -p udp --dport 6081 -j DNAT --to-destination ${GW_DIRIF_IP}
+iptables -w ${TIMEOUT} -t nat -A PREROUTING -i ${GW_WGIF} -p udp --dport 6254 -j DNAT --to-destination ${GW_DIRIF_IP}
 # Enhance the firewall
 iptables -w ${TIMEOUT} -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 # Allow ping and WireGuard on the external interface
@@ -62,13 +62,13 @@ ip link set ${OVS_FACIF} mtu ${ACC_MTU}
 ip link set ${OVS_FACIF} up
 
 # Setup WireGuard
-${BASEDIR}/wg_quick_wrapper.sh up ${BASEDIR}/${GW_WGIF}.conf
+${BASE_DIR}/run_wireguard.sh
 
 # Start the DNS server
-${BASEDIR}/run_dns_server.sh
+${BASE_DIR}/run_dns_server.sh start
 
 # Start Open vSwitch
-${BASEDIR}/run_ovs.sh
+${BASE_DIR}/run_ovs.sh
 
 # Setup the access network
 ip addr add ${GATEWAY_NET} dev ${OVS_BR}

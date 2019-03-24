@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-BASEDIR=$(cd "$(dirname "$0")"; pwd -P)
-source ${BASEDIR}/constants.conf
-source ${BASEDIR}/network.conf
+BASE_DIR=$(cd "$(dirname "$0")"; pwd -P)
+source ${BASE_DIR}/constants.conf
+source ${BASE_DIR}/network.conf
 
 export OVS_LOGDIR="${LOG_DIR}/openvswitch"
 export OVS_RUNDIR="${RUN_DIR}/openvswitch"
@@ -16,5 +16,5 @@ mkdir -p ${OVS_SYSCONFDIR} 2>/dev/null
 
 ${OVS_CTL} --system-id=random --db-sock="${OVS_DBSOCK}" start
 
-${BASEDIR}/ovs_vsctl_wrapper.sh --may-exist add-br "${OVS_BR}"
-${BASEDIR}/ovs_vsctl_wrapper.sh --may-exist add-port "${OVS_BR}" "${OVS_FACIF}"
+${BASE_DIR}/ovs_vsctl_wrapper.sh --may-exist add-br "${OVS_BR}"
+${BASE_DIR}/ovs_vsctl_wrapper.sh --may-exist add-port "${OVS_BR}" "${OVS_FACIF}"

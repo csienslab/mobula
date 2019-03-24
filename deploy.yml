@@ -25,7 +25,7 @@
       when: not mobula_install_result.stat.exists
   
     - name: Fetch External Interface
-      shell: 'cat {{install_dir}}/extif.json'
+      shell: 'cat {{install_dir}}/data/extif.json'
       register: 'extif_json_result'
       when: mobula_install_result.stat.exists
   
