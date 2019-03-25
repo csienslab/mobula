@@ -1,19 +1,19 @@
 - name: Restart WireGuard
-  shell: '{{install_dir}}/run_wireguard.sh'
+  shell: '{{bin_dir}}/run_wireguard.sh'
 
 - name: List OVS Ports
-  shell: '{{install_dir}}/ovs_vsctl_wrapper.sh list-ports {{ovs_bridge}}'
+  shell: '{{bin_dir}}/ovs_vsctl_wrapper.sh list-ports {{ovs_bridge}}'
   register: port_list_result
 
 - name: Clean OVS Tunnels
-  shell: '{{install_dir}}/ovs_vsctl_wrapper.sh del-port {{ovs_bridge}} {{item}}'
+  shell: '{{bin_dir}}/ovs_vsctl_wrapper.sh del-port {{ovs_bridge}} {{item}}'
   when: item is match(geneve_tunnel_prefix + '*')
   with_items:
     - '{{port_list_result.stdout_lines}}'
 
 - name: Create OVS Tunnels
   shell: >
-    {{install_dir}}/ovs_vsctl_wrapper.sh add-port {{ovs_bridge}}
+    {{bin_dir}}/ovs_vsctl_wrapper.sh add-port {{ovs_bridge}}
     {{geneve_tunnel_prefix}}{{hostvars[item].host_id}}
     -- set interface {{geneve_tunnel_prefix}}{{hostvars[item].host_id}} type=geneve
     options:remote_ip={{hostvars[item].host_id | get_wireguard_addr | ipaddr('address')}}
@@ -24,4 +24,4 @@
     - all
 
 - name: Restart DNS Server
-  shell: '{{install_dir}}/run_dns_server.sh restart'
+  shell: '{{bin_dir}}/run_dns_server.sh restart'

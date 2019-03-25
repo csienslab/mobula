@@ -1,6 +1,8 @@
 ---
 wireguard_iface: 'mo-wg-gw'
 wireguard_addr: '{{host_id | get_wireguard_addr}}'
+innerwire_subnet: '{{wireguard_addr | ipsubnet(17, 0)}}'
+extrawire_subnet: '{{wireguard_addr | ipsubnet(17, 1)}}'
 gateway_access_addr: '{{host_id | get_access_addr("gateway")}}'
 gateway_external_iface: 'mo-ext-gw'
 gateway_middle_iface: 'mo-mid-gw'

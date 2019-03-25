@@ -8,7 +8,7 @@ RefuseManualStop=yes
 
 [Service]
 Type=oneshot
-ExecStart={{install_dir}}/start.sh
+ExecStart={{install_dir}}/bin/start.sh
 RemainAfterExit=yes
 StandardOutput=journal+console
 StandardError=journal+console

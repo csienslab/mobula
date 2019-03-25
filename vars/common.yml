@@ -1,4 +1,8 @@
 ---
 mark: mobula
-install_dir: '/opt/{{mark}}'
 ovs_bridge: 'ovsbr-{{mark}}'
+install_dir: '/opt/{{mark}}'
+run_dir: '{{install_dir}}/run'
+log_dir: '{{install_dir}}/log'
+etc_dir: '{{install_dir}}/etc'
+bin_dir: '{{install_dir}}/bin'

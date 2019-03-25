@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-BASE_DIR=$(cd "$(dirname "$0")"; pwd -P)
-source ${BASE_DIR}/constants.conf
+BASE_DIR="{{install_dir}}"
+source ${BASE_DIR}/etc/constants.conf
 PID_FILE="${RUN_DIR}/dnsmasq.pid"
 
 if [ -f "${PID_FILE}" ] && [ "$1" = "restart" ]; then
@@ -12,7 +12,7 @@ if [ -f "${PID_FILE}" ] && [ "$1" = "restart" ]; then
 fi
 
 ip netns exec ${NS_NAME} dnsmasq -x "${PID_FILE}" \
-    --conf-file="${DATA_DIR}/dnsmasq.conf" \
-    --addn-hosts="${DATA_DIR}/hosts" \
-    --resolv-file="${DATA_DIR}/resolv.conf" \
+    --conf-file="${ETC_DIR}/dnsmasq/dnsmasq.conf" \
+    --addn-hosts="${ETC_DIR}/dnsmasq/hosts" \
+    --resolv-file="${ETC_DIR}/dnsmasq/resolv.conf" \
     --log-facility=/dev/null

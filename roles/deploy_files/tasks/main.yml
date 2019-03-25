@@ -1,68 +1,39 @@
 ---
 - name: Create Mobula Directory
   file:
-    path: '{{item}}'
+    path: '{{install_dir}}/{{item.path}}'
     state: directory
     owner: root
     group: root
-    mode: 0755
-  with_items:
-    - '{{install_dir}}'
-    - '{{install_dir}}/data'
+    mode: '{{item.mode}}'
+  when: item.state == 'directory'
+  with_filetree: 'files/root'
 
 - name: Backup External Interface
   copy:
     content: '{{ext_net | to_json}}'
-    dest: '{{install_dir}}/data/extif.json'
+    dest: '{{etc_dir}}/extif.json'
     owner: root
     group: root
-    mode: 0600
+    mode: 0660
 
-- name: Copy Mobula Scripts
-  copy:
-    src: '{{item}}'
-    dest: '{{install_dir}}'
-    owner: root
-    group: root
-    mode: 0755
-  with_items:
-    - 'files/gateway.sh'
-    - 'files/ovs_vsctl_wrapper.sh'
-    - 'files/run_dns_server.sh'
-    - 'files/run_ovs.sh'
-    - 'files/run_wireguard.sh'
-    - 'files/start.sh'
-
-- name: Generate Mobula Configuration
+- name: Copy Mobula Files
   template:
-    src: '{{item}}'
-    dest: '{{install_dir}}'
+    src: '{{item.src}}'
+    dest: '{{install_dir}}/{{item.path}}'
     owner: root
     group: root
-    mode: 0644
-  with_items:
-    - 'files/constants.conf'
-    - 'files/network.conf'
-
-- name: Generate Mobula Data
-  template:
-    src: '{{item}}'
-    dest: '{{install_dir}}/data'
-    owner: root
-    group: root
-    mode: 0644
-  with_items:
-    - 'files/data/dnsmasq.conf'
-    - 'files/data/hosts'
-    - 'files/data/resolv.conf'
+    mode: '{{item.mode}}'
+  when: item.state == 'file'
+  with_filetree: 'files/root'
 
 - name: Generate WireGuard Configuration
   template:
-    src: 'files/data/wireguard.conf'
-    dest: '{{install_dir}}/data/{{wireguard_iface}}.conf'
+    src: 'files/wireguard.conf'
+    dest: '{{etc_dir}}/wireguard/{{wireguard_iface}}.conf'
     owner: root
     group: root
-    mode: 0600
+    mode: 0660
 
 - name: Copy Mobula Service
   template:
