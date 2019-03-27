@@ -1,9 +1,9 @@
 ---
-- shell: 'ip addr add {{access_nets[inventory_hostname].facade_addr}} dev {{facade_iface}}'
+- shell: 'ip addr add {{networks[inventory_hostname].facade_addr}} dev {{facade_iface}}'
 
-- shell: 'ip route add default via {{access_nets[inventory_hostname].gateway_ip}}'
+- shell: 'ip route add default via {{networks[inventory_hostname].gateway_ip}}'
 
 - copy:
     dest: '/etc/resolv.conf'
-    content: 'nameserver {{access_nets[inventory_hostname].gateway_ip}}'
+    content: 'nameserver {{networks[inventory_hostname].gateway_ip}}'
     unsafe_writes: yes

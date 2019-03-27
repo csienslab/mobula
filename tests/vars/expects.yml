@@ -1,6 +1,6 @@
 external_gateway_ip: '192.0.2.1'
 facade_iface: 'veth_fac0'
-access_nets:
+networks:
   192.0.2.2:
     facade_addr: '10.31.128.2/16'
     gateway_ip: '10.31.0.2'

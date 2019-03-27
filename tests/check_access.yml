@@ -8,7 +8,7 @@
     - include_role:
         name: setup_network
 
-    - shell: 'ping -c 1 {{access_nets[item].facade_addr | ipaddr("address")}}'
+    - shell: 'ping -c 1 {{networks[item].facade_addr | ipaddr("address")}}'
       register: task_result
       until: task_result is succeeded
       retries: 10
@@ -16,7 +16,7 @@
       with_inventory_hostnames:
         - all
 
-    - shell: 'ping -c 1 {{access_nets[item].gateway_ip}}'
+    - shell: 'ping -c 1 {{networks[item].gateway_ip}}'
       with_inventory_hostnames:
         - all
 
@@ -26,7 +26,7 @@
 
     - shell: python -c 'import socket; print(socket.gethostbyname("{{hostvars[item].hostname}}"))'
       register: lookup_result
-      failed_when: lookup_result.stdout_lines[0] != (access_nets[item].facade_addr | ipaddr("address"))
+      failed_when: lookup_result.stdout_lines[0] != (networks[item].facade_addr | ipaddr("address"))
       when: item != inventory_hostname
       with_inventory_hostnames:
         - all
@@ -38,9 +38,9 @@
 
     - shell: |
         ip link add link {{facade_iface}} name vlan2 type vlan id 2
-        ip addr add {{access_nets[inventory_hostname].vlan_addr}} dev vlan2
+        ip addr add {{networks[inventory_hostname].vlan_addr}} dev vlan2
         ip link set vlan2 up
 
-    - shell: 'ping -c 1 {{access_nets[item].vlan_addr | ipaddr("address")}}'
+    - shell: 'ping -c 1 {{networks[item].vlan_addr | ipaddr("address")}}'
       with_inventory_hostnames:
         - all
