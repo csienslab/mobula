@@ -1,0 +1,21 @@
+language: python
+
+dist: xenial
+
+python:
+  - "3.5"
+
+services:
+  - docker
+
+before_install:
+  - sudo add-apt-repository ppa:wireguard/wireguard
+  - sudo apt-get update
+  - sudo apt-get -y install wireguard openvswitch-switch
+
+install:
+  - pip install -r ./requirements.txt
+  - pip install -r ./tests/requirements.txt
+
+script:
+  - ./tests/run_test.sh
