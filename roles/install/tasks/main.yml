@@ -18,3 +18,15 @@
 
 - name: Reboot
   reboot:
+  when: test is not defined
+
+- name: Reboot Containers (Test)
+  local_action: |
+    shell docker-compose -f ./tests/docker-compose.yml kill
+          docker-compose -f ./tests/docker-compose.yml start
+  when: test is defined
+
+- name: Reconnect to Containers (Test)
+  wait_for_connection:
+    delay: 10
+  when: test is defined

@@ -1,0 +1,39 @@
+version: "3"
+services:
+  host2:
+    hostname: host2.example.com
+    build: ./docker
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      test_net:
+        ipv4_address: 192.0.2.2
+
+  host3:
+    hostname: host3.example.com
+    build: ./docker
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      test_net:
+        ipv4_address: 192.0.2.3
+
+  host4:
+    hostname: host4.example.com
+    build: ./docker
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      test_net:
+        ipv4_address: 192.0.2.4
+
+networks:
+  test_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.0.2.0/24

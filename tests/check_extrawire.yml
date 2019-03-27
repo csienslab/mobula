@@ -1,0 +1,32 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    - include_vars: 'vars/expects.yml'
+
+    - include_role:
+        name: setup_network
+
+    - local_action: 'shell wg-quick up ./extrawire_test.conf'
+      run_once: true
+
+    - block:
+        - shell: 'ping -c 1 {{access_nets[item].facade_addr | ipaddr("address")}}'
+          register: task_result
+          until: task_result is succeeded
+          retries: 10
+          delay: 1
+          with_inventory_hostnames:
+            - all
+
+        - shell: 'ping -c 1 {{access_nets[item].gateway_ip}}'
+          with_inventory_hostnames:
+            - all
+
+        - shell: 'ping -c 1 {{access_nets[item].intrawire_ip}}'
+          with_inventory_hostnames:
+            - all
+
+      always:
+        - local_action: 'shell wg-quick down ./extrawire_test.conf'
+          run_once: true

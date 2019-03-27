@@ -1,0 +1,16 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    - include_vars: 'vars/expects.yml'
+
+    - shell: 'ping -c 1 {{access_nets[item].intrawire_ip}}'
+      with_inventory_hostnames:
+        - all
+
+    - include_role:
+        name: setup_network
+
+    - shell: 'ping -c 1 {{access_nets[item].intrawire_ip}}'
+      with_inventory_hostnames:
+        - all

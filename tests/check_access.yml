@@ -1,0 +1,38 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    - include_vars: 'vars/expects.yml'
+    - include_vars: 'extra_hosts.yml'
+
+    - include_role:
+        name: setup_network
+
+    - shell: 'ping -c 1 {{access_nets[item].facade_addr | ipaddr("address")}}'
+      register: task_result
+      until: task_result is succeeded
+      retries: 10
+      delay: 1
+      with_inventory_hostnames:
+        - all
+
+    - shell: 'ping -c 1 {{access_nets[item].gateway_ip}}'
+      with_inventory_hostnames:
+        - all
+
+    - shell: 'ping -c 1 {{external_gateway_ip}}'
+      with_inventory_hostnames:
+        - all
+
+    - shell: python -c 'import socket; print(socket.gethostbyname("{{hostvars[item].hostname}}"))'
+      register: lookup_result
+      failed_when: lookup_result.stdout_lines[0] != (access_nets[item].facade_addr | ipaddr("address"))
+      when: item != inventory_hostname
+      with_inventory_hostnames:
+        - all
+
+    - shell: python -c 'import socket; print(socket.gethostbyname("{{item.value}}"))'
+      register: lookup_result
+      failed_when: lookup_result.stdout_lines[0] != item.key
+      with_dict: '{{extra_hosts}}'
+

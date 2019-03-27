@@ -1,6 +1,4 @@
 ---
-# This playbook deploys Mobula
-
 - hosts: all
   remote_user: root
   tasks:
@@ -11,8 +9,15 @@
 
     - include_vars: 'vars/common.yml'
     - include_vars: 'vars/{{ansible_distribution}}.yml'
+
     - include_vars: 'extra_hosts.yml'
+      when: test is not defined
     - include_vars: 'extra_wires.yml'
+      when: test is not defined
+    - include_vars: 'tests/extra_hosts.yml'
+      when: test is defined
+    - include_vars: 'tests/extra_wires.yml'
+      when: test is defined
 
     - name: Check Installed Mobula
       stat:

@@ -1,0 +1,15 @@
+external_gateway_ip: '192.0.2.1'
+facade_iface: 'veth_fac0'
+access_nets:
+  192.0.2.2:
+    facade_addr: '10.31.128.2/16'
+    gateway_ip: '10.31.0.2'
+    intrawire_ip: '10.30.0.2'
+  192.0.2.3:
+    facade_addr: '10.31.128.3/16'
+    gateway_ip: '10.31.0.3'
+    intrawire_ip: '10.30.0.3'
+  192.0.2.4:
+    facade_addr: '10.31.128.4/16'
+    gateway_ip: '10.31.0.4'
+    intrawire_ip: '10.30.0.4'
