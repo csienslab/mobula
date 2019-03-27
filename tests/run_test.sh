@@ -27,7 +27,7 @@ docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" start
 sleep 5
-ansible-playbook -K -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_extrawire.yml
+ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_extrawire.yml
 docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" down
