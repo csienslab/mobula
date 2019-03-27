@@ -11,5 +11,5 @@ export OVS_SYSCONFDIR="${ETC_DIR}"
 
 ${OVS_CTL} --system-id=random --db-sock="${OVS_DBSOCK}" start
 
-${BIN_DIR}/ovs_vsctl_wrapper.sh --may-exist add-br "${OVS_BR}"
+${BIN_DIR}/ovs_vsctl_wrapper.sh --may-exist add-br "${OVS_BR}" -- set bridge "${OVS_BR}" stp_enable=true
 ${BIN_DIR}/ovs_vsctl_wrapper.sh --may-exist add-port "${OVS_BR}" "${OVS_FACIF}"
