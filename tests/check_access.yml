@@ -36,3 +36,11 @@
       failed_when: lookup_result.stdout_lines[0] != item.key
       with_dict: '{{extra_hosts}}'
 
+    - shell: |
+        ip link add link {{facade_iface}} name vlan2 type vlan id 2
+        ip addr add {{access_nets[inventory_hostname].vlan_addr}} dev vlan2
+        ip link set vlan2 up
+
+    - shell: 'ping -c 1 {{access_nets[item].vlan_addr | ipaddr("address")}}'
+      with_inventory_hostnames:
+        - all

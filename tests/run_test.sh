@@ -11,18 +11,22 @@ docker-compose -f "${COMPOSE_FILE}" kill
 docker-compose -f "${COMPOSE_FILE}" down
 
 docker-compose -f "${COMPOSE_FILE}" up --force-recreate -d
+sleep 5
 ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./deploy.yml -e 'test=1'
 docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" start
+sleep 5
 ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_access.yml
 docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" start
+sleep 5
 ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_intrawire.yml
 docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" start
+sleep 5
 ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_extrawire.yml
 docker-compose -f "${COMPOSE_FILE}" kill
 

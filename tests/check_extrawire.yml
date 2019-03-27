@@ -7,8 +7,12 @@
     - include_role:
         name: setup_network
 
-    - local_action: 'shell wg-quick up ./extrawire_test.conf'
-      run_once: true
+- hosts: '127.0.0.1'
+  connection: local
+  tasks:
+    - include_vars: 'vars/expects.yml'
+
+    - shell: 'wg-quick up ./extrawire_test.conf'
 
     - block:
         - shell: 'ping -c 1 {{access_nets[item].facade_addr | ipaddr("address")}}'
@@ -28,5 +32,4 @@
             - all
 
       always:
-        - local_action: 'shell wg-quick down ./extrawire_test.conf'
-          run_once: true
+        - shell: 'wg-quick down ./extrawire_test.conf'

@@ -30,6 +30,36 @@ services:
       test_net:
         ipv4_address: 192.0.2.4
 
+  host5:
+    hostname: host5.example.com
+    build: ./docker
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      test_net:
+        ipv4_address: 192.0.2.5
+
+  host6:
+    hostname: host6.example.com
+    build: ./docker
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      test_net:
+        ipv4_address: 192.0.2.6
+
+  host256:
+    hostname: host256.example.com
+    build: ./docker
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    networks:
+      test_net:
+        ipv4_address: 192.0.2.7
+
 networks:
   test_net:
     driver: bridge
