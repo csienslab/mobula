@@ -1,6 +1,9 @@
 ![Imgur](https://imgur.com/iWrzKv7.png)
 
 ## Overview
+[![Travis branch](https://img.shields.io/travis/com/csienslab/mobula/master.svg?style=flat-square)](https://travis-ci.com/csienslab/mobula)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
 Mobula network is a decentralized, self-healing layer 2 encrypted virtual network.
 
 The whole system is built of production quality components. The layer 2 switching is provided by Open vSwitch[1], the network encryption is based on WireGuard[2], and the internal routing is processed by Linux networking subsystem.
