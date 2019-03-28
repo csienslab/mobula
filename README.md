@@ -1,7 +1,7 @@
 ![Imgur](https://imgur.com/iWrzKv7.png)
 
 ## Overview
-Mobula is a decentralized, self-healing layer 2 encrypted virtual network.
+Mobula network is a decentralized, self-healing layer 2 encrypted virtual network.
 
 The whole system is built of production quality components. The layer 2 switching is provided by Open vSwitch[1], the network encryption is based on WireGuard[2], and the internal routing is processed by Linux networking subsystem.
 
@@ -43,14 +43,18 @@ pip install -r requirements.txt
 ```
 
 ## The Mobula Network Design
-In order to understand how to configure Mobula, you need to know the design of Mobula network. Here, given the `${Host ID}` of a host, we define `x.z` of the host as `${Host ID / 256}.${Host ID % 256}` and `y.z` as `${Host ID / 256 + 128}.${Host ID % 256}`.
+In order to understand how to configure Mobula, you need to know the design of Mobula network.
+
+First, given the `${Host ID}` of a host, we define the following variables:
+- `x.z`: `${Host ID / 256}.${Host ID % 256}`
+- `y.z`: `${Host ID / 256 + 128}.${Host ID % 256}`.
 
 There are 3 virtual networks in Mobula:
 - Access network
 - Intrawire network
 - Extrawire network
 
-Each host will have 3 virtual interfaces:
+Each host has 3 virtual interfaces:
 - `veth_fac0`
   - Can reach access network
   - Assigned IP: `10.31.z.y/16`
@@ -60,7 +64,7 @@ Each host will have 3 virtual interfaces:
   - Assigned IP: `10.30.x.y/32`
   - Reachable subnet: `10.30.0.0/16`
 - `veth_${host external interface}`
-  - Host's orignal external interface (bridged)
+  - Host's external interface(bridged to the orignal external interface)
 
 ### Topology
 Suppose there are 3 hosts(Host 1, Host 2, and Host 3), the network topology looks like the following graph. The gateways of Host 1 and Host 2 are not drawn on the graph, but they are similar to the gateway of Host 3.
