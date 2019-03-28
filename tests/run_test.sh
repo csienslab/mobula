@@ -7,6 +7,8 @@ KEY_FILE="./tests/docker/ssh_key"
 export ANSIBLE_SSH_RETRIES=5
 export ANSIBLE_HOST_KEY_CHECKING="False"
 
+chmod 400 "${KEY_FILE}"
+
 docker-compose -f "${COMPOSE_FILE}" kill
 docker-compose -f "${COMPOSE_FILE}" down
 
