@@ -19,7 +19,7 @@ ip netns add ${NS_NAME}
 # Setup the direct network
 ip link add ${GW_DIRIF} type veth peer name ${HS_DIRIF}
 ip link set ${GW_DIRIF} netns ${NS_NAME}
-ip addr add ${HS_DIRIF_IP} dev ${HS_DIRIF}
+ip addr add ${HS_DIRIF_IP} peer ${GW_DIRIF_IP} dev ${HS_DIRIF}
 ip link set ${HS_DIRIF} mtu ${WG_MTU}
 ip link set ${HS_DIRIF} up
 
@@ -39,7 +39,6 @@ ip link set ${HS_FACIF} up
 ip netns exec ${NS_NAME} ${BIN_DIR}/gateway.sh
 
 # Setup the routing rules for the direct network
-ip route add ${GW_DIRIF_IP} dev ${HS_DIRIF}
 ip route add table 10 default via ${GW_DIRIF_IP} dev ${HS_DIRIF}
 # Route all traffic from the direct ip to the direct network
 ip rule add from ${HS_DIRIF_IP} table 10 priority 10

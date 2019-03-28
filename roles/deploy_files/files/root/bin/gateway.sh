@@ -41,10 +41,9 @@ ip6tables -w ${TL} -A OUTPUT -j DROP
 ip6tables -w ${TL} -A FORWARD -j DROP
 
 # Setup the direct network
-ip addr add ${GW_DIRIF_IP} dev ${GW_DIRIF}
+ip addr add ${GW_DIRIF_IP} peer ${HS_DIRIF_IP} dev ${GW_DIRIF}
 ip link set ${GW_DIRIF} mtu ${WG_MTU}
 ip link set ${GW_DIRIF} up
-ip route add ${HS_DIRIF_IP} dev ${GW_DIRIF}
 
 # Setup the external network
 ip link add name ${GW_EXTIF} type bridge
