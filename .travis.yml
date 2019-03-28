@@ -8,10 +8,16 @@ python:
 services:
   - docker
 
+addons:
+  apt:
+    sources:
+      - sourceline: ppa:wireguard/wireguard
+    packages:
+      - wireguard
+      - openvswitch-switch
+
 before_install:
-  - sudo add-apt-repository -y ppa:wireguard/wireguard
-  - sudo apt-get update
-  - sudo apt-get -y install wireguard openvswitch-switch
+  - sudo modprobe wireguard openvswitch
 
 install:
   - pip install -r ./requirements.txt
