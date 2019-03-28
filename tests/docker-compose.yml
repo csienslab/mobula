@@ -2,7 +2,9 @@ version: "3"
 services:
   host2:
     hostname: host2.example.com
-    build: ./docker
+    build:
+      context: ./docker
+      dockerfile: host.dockerfile
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
@@ -12,7 +14,9 @@ services:
 
   host3:
     hostname: host3.example.com
-    build: ./docker
+    build:
+      context: ./docker
+      dockerfile: host.dockerfile
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
@@ -22,7 +26,9 @@ services:
 
   host4:
     hostname: host4.example.com
-    build: ./docker
+    build:
+      context: ./docker
+      dockerfile: host.dockerfile
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
@@ -32,7 +38,9 @@ services:
 
   host5:
     hostname: host5.example.com
-    build: ./docker
+    build:
+      context: ./docker
+      dockerfile: host.dockerfile
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
@@ -42,7 +50,9 @@ services:
 
   host6:
     hostname: host6.example.com
-    build: ./docker
+    build:
+      context: ./docker
+      dockerfile: host.dockerfile
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
@@ -52,13 +62,27 @@ services:
 
   host256:
     hostname: host256.example.com
-    build: ./docker
+    build:
+      context: ./docker
+      dockerfile: host.dockerfile
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
     networks:
       test_net:
         ipv4_address: 192.0.2.7
+
+  extrawire:
+    build:
+      context: ./docker
+      dockerfile: extrawire.dockerfile
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - .:/tests:ro
+    privileged: true
+    networks:
+      test_net:
+        ipv4_address: 192.0.2.200
 
 networks:
   test_net:

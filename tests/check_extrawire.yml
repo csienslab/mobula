@@ -7,30 +7,31 @@
     - include_role:
         name: setup_network
 
-- hosts: '127.0.0.1'
-  connection: local
-  become: yes
+- hosts: 'localhost'
+  tasks:
+    - add_host:
+        name: '192.0.2.200'
+        groups: 'extrawire'
+
+- hosts: 'extrawire'
+  remote_user: root
   tasks:
     - include_vars: 'vars/expects.yml'
 
-    - shell: 'wg-quick up ./extrawire_test.conf'
+    - shell: 'wg-quick up /tests/extrawire_test.conf'
 
-    - block:
-        - shell: 'ping -c 1 {{networks[item].facade_addr | ipaddr("address")}}'
-          register: task_result
-          until: task_result is succeeded
-          retries: 10
-          delay: 1
-          with_inventory_hostnames:
-            - all
+    - shell: 'ping -c 1 {{networks[item].facade_addr | ipaddr("address")}}'
+      register: task_result
+      until: task_result is succeeded
+      retries: 10
+      delay: 1
+      with_inventory_hostnames:
+        - all:!extrawire
 
-        - shell: 'ping -c 1 {{networks[item].gateway_ip}}'
-          with_inventory_hostnames:
-            - all
+    - shell: 'ping -c 1 {{networks[item].gateway_ip}}'
+      with_inventory_hostnames:
+        - all:!extrawire
 
-        - shell: 'ping -c 1 {{networks[item].intrawire_ip}}'
-          with_inventory_hostnames:
-            - all
-
-      always:
-        - shell: 'wg-quick down ./extrawire_test.conf'
+    - shell: 'ping -c 1 {{networks[item].intrawire_ip}}'
+      with_inventory_hostnames:
+        - all:!extrawire
