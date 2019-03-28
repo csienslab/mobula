@@ -2,6 +2,7 @@
 
 set -e
 
+RESULT=0
 COMPOSE_FILE="./tests/docker-compose.yml"
 KEY_FILE="./tests/docker/ssh_key"
 export ANSIBLE_SSH_RETRIES=5
@@ -20,17 +21,19 @@ docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" start
 sleep 5
-ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_access.yml
+ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_access.yml || RESULT=1
 docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" start
 sleep 5
-ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_intrawire.yml
+ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_intrawire.yml || RESULT=1
 docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" start
 sleep 5
-ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_extrawire.yml
+ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" ./tests/check_extrawire.yml || RESULT=1
 docker-compose -f "${COMPOSE_FILE}" kill
 
 docker-compose -f "${COMPOSE_FILE}" down
+
+exit ${RESULT}
