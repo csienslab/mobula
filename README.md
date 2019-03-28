@@ -3,7 +3,7 @@
 ## Overview
 Mobula is a decentralized, self-healing layer 2 encrypted virtual network.
 
-The whole system is built of production quality components. The layer 2 switching is provided by Open vSwitch[1], the network encryption is based on WireGuard[2], and the internal routing is utilized Linux networking subsystem.
+The whole system is built of production quality components. The layer 2 switching is provided by Open vSwitch[1], the network encryption is based on WireGuard[2], and the internal routing is processed by Linux networking subsystem.
 
 ## Terminology
 - Deployer: The computer which runs this script to deploy Mobula network on hosts
