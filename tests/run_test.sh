@@ -6,6 +6,7 @@ COMPOSE_FILE="./tests/docker-compose.yml"
 KEY_FILE="./tests/docker/ssh_key"
 export ANSIBLE_SSH_RETRIES=5
 export ANSIBLE_HOST_KEY_CHECKING="False"
+export ANSIBLE_GATHER_SUBSET="network"
 
 chmod 400 "${KEY_FILE}"
 
