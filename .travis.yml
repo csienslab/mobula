@@ -13,6 +13,7 @@ addons:
     sources:
       - sourceline: ppa:wireguard/wireguard
     packages:
+      - linux-headers-$(uname -r)
       - wireguard
       - openvswitch-switch
 
