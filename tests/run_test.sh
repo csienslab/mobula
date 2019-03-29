@@ -14,7 +14,7 @@ chmod 400 "${KEY_FILE}"
 docker-compose -f "${COMPOSE_FILE}" kill
 docker-compose -f "${COMPOSE_FILE}" down
 
-docker-compose -f "${COMPOSE_FILE}" up --force-recreate -d
+docker-compose -f "${COMPOSE_FILE}" up --build --force-recreate -d
 sleep 5
 ansible-playbook -i ./tests/hosts.yml --key-file "${KEY_FILE}" --limit "192.0.2.3,192.0.2.5" ./deploy.yml -e 'test=1'
 docker-compose -f "${COMPOSE_FILE}" kill

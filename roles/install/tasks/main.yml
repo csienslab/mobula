@@ -1,15 +1,16 @@
 ---
+- name: Add WireGuard Repository
+  include_tasks: 'wireguard/{{ansible_distribution}}.yml'
+
 - name: Install Packages
   package: 
     name: '{{item}}'
     state: present
   with_items:
+    - '{{pkgs_dnsmasq}}'
     - '{{pkgs_iproute2}}'
     - '{{pkgs_openvswitch}}'
-    - '{{pkgs_dnsmasq}}'
-
-- name: Install WireGuard
-  include_tasks: 'wireguard/{{ansible_distribution}}.yml'
+    - '{{pkgs_wireguard}}'
 
 - name: Enable Mobula Service
   systemd:
@@ -24,6 +25,7 @@
   local_action: |
     shell docker-compose -f ./tests/docker-compose.yml kill
           docker-compose -f ./tests/docker-compose.yml start
+  run_once: true
   when: test is defined
 
 - name: Reconnect to Containers (Test)

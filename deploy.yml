@@ -22,22 +22,22 @@
     - name: Check Installed Mobula
       stat:
         path: '{{install_dir}}'
-      register: mobula_install_result
+      register: install_result
     
     - name: Get External Interface
       set_fact:
         ext_net: '{{ansible_default_ipv4}}'
-      when: not mobula_install_result.stat.exists
+      when: not install_result.stat.exists
   
     - name: Fetch External Interface
       shell: 'cat {{etc_dir}}/extif.json'
       register: 'extif_json_result'
-      when: mobula_install_result.stat.exists
+      when: install_result.stat.exists
   
     - name: Load External Interface
       set_fact:
         ext_net: '{{extif_json_result.stdout | from_json}}'
-      when: mobula_install_result.stat.exists
+      when: install_result.stat.exists
 
     - name: Deploy Files
       include_role:
@@ -46,7 +46,7 @@
     - name: Install
       include_role:
         name: install
-      when: not mobula_install_result.stat.exists or reinstall is defined
+      when: not install_result.stat.exists or reinstall is defined
 
     - name: Configure
       include_role:

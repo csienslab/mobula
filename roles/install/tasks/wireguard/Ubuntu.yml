@@ -3,8 +3,3 @@
   shell: |
     add-apt-repository -y ppa:wireguard/wireguard
     apt-get -y update
-
-- name: Install WireGuard
-  package:
-    name: 'wireguard'
-    state: present

@@ -1,4 +1,7 @@
 ---
-pkgs_iproute2: iproute
-pkgs_openvswitch: openvswitch
-pkgs_dnsmasq: dnsmasq
+pkgs_dnsmasq: 'dnsmasq'
+pkgs_iproute2: 'iproute'
+pkgs_openvswitch: 'openvswitch'
+pkgs_wireguard:
+  - 'wireguard-dkms'
+  - 'wireguard-tools'
