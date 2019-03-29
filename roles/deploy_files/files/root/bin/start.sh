@@ -19,9 +19,10 @@ ip netns add ${NS_NAME}
 # Setup the direct network
 ip link add ${GW_DIRIF} type veth peer name ${HS_DIRIF}
 ip link set ${GW_DIRIF} netns ${NS_NAME}
-ip addr add ${HS_DIRIF_IP} peer ${GW_DIRIF_IP} dev ${HS_DIRIF}
+ip addr add ${HS_DIRIF_IP} dev ${HS_DIRIF}
 ip link set ${HS_DIRIF} mtu ${WG_MTU}
 ip link set ${HS_DIRIF} up
+ip route add ${GW_DIRIF_IP} dev ${HS_DIRIF} src ${HS_DIRIF_IP}
 
 # Duplicate the external interface
 ip link add ${HS_EXTIF} type veth peer name ${GW_MIDIF}
