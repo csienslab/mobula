@@ -9,11 +9,3 @@
   package:
     name: epel-release
     state: present
-
-- name: Install WireGuard
-  package:
-    name: '{{item}}'
-    state: present
-  with_items:
-    - 'wireguard-dkms'
-    - 'wireguard-tools'

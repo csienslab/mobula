@@ -1,5 +1,5 @@
 ---
-mark: mobula
+mark: 'mobula'
 ovs_bridge: 'ovsbr-{{mark}}'
 install_dir: '/opt/{{mark}}'
 run_dir: '{{install_dir}}/run'
