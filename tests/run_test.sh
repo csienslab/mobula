@@ -13,6 +13,7 @@ chmod 400 "${KEY_FILE}"
 
 docker-compose -f "${COMPOSE_FILE}" kill
 docker-compose -f "${COMPOSE_FILE}" down
+docker-compose -f "${COMPOSE_FILE}" build
 
 docker-compose -f "${COMPOSE_FILE}" up --force-recreate -d
 sleep 5
