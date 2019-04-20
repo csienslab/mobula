@@ -9,14 +9,6 @@
   when: item.state == 'directory'
   with_filetree: 'files/root'
 
-- name: Backup External Interface
-  copy:
-    content: '{{ext_net | to_json}}'
-    dest: '{{etc_dir}}/extif.json'
-    owner: root
-    group: root
-    mode: 0660
-
 - name: Copy Mobula Files
   template:
     src: '{{item.src}}'

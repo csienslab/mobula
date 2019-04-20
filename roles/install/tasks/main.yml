@@ -1,4 +1,12 @@
 ---
+- name: Backup External Interface
+  copy:
+    content: '{{ext_net | to_nice_json}}'
+    dest: '{{etc_dir}}/extif.json'
+    owner: root
+    group: root
+    mode: 0660
+
 - name: Add WireGuard Repository
   include_tasks: 'wireguard/{{ansible_distribution}}.yml'
 
