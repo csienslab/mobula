@@ -1,0 +1,10 @@
+---
+- local_action: 'shell wg genkey | tee /dev/fd/2 | wg pubkey'
+  register: genkey_result
+  with_items: '{{groups["all"]}}'
+  run_once: true
+
+- set_fact:
+    wireguard_keys: '{{wireguard_keys | default({}) | combine({item.item: {"public": item.stdout, "private": item.stderr}})}}'
+  with_items: '{{genkey_result.results}}'
+  run_once: true

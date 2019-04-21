@@ -19,6 +19,9 @@
   when: item.state == 'file'
   with_filetree: 'files/root'
 
+- name: Generate WireGuard Keys
+  include_tasks: 'generate_wireguard_key.yml'
+
 - name: Generate WireGuard Configuration
   template:
     src: 'files/wireguard.conf'
