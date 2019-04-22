@@ -1,6 +1,7 @@
 hosts.yml
 extra_hosts.yml
 extra_wires.yml
+wireguard_pubkeys.yml
 *.retry
 
 # Byte-compiled / optimized / DLL files
