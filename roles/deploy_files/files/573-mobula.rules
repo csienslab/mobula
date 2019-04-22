@@ -1,0 +1,1 @@
+SUBSYSTEM=="net", ACTION=="add", RUN+="{{install_dir}}/bin/udev_hook.sh '%E{INTERFACE}'"

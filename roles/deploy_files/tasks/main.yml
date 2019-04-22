@@ -37,3 +37,11 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Copy Mobula Udev Rules
+  template:
+    src: 'files/573-mobula.rules'
+    dest: '/etc/udev/rules.d'
+    owner: root
+    group: root
+    mode: 0644

@@ -13,8 +13,8 @@ ip link del ${GW_DIRIF} 2>/dev/null
 ip link del ${HS_DIRIF} 2>/dev/null
 ip netns del ${NS_NAME} 2>/dev/null
 
-# Setup interfaces and namespaces
-ip netns add ${NS_NAME}
+# Try to create the namespace
+ip netns add ${NS_NAME} 2>/dev/null
 
 # Setup the direct network
 ip link add ${GW_DIRIF} type veth peer name ${HS_DIRIF}
@@ -26,8 +26,7 @@ ip route add ${GW_DIRIF_IP} dev ${HS_DIRIF} src ${HS_DIRIF_IP}
 
 # Duplicate the external interface
 ip link add ${HS_EXTIF} type veth peer name ${GW_MIDIF}
-# Move the original external and the middle interface into the namespace
-ip link set ${EXT_IF} netns ${NS_NAME}
+# Move the middle interface into the namespace
 ip link set ${GW_MIDIF} netns ${NS_NAME}
 
 # Setup the facade interface
@@ -46,3 +45,6 @@ ip rule add from ${HS_DIRIF_IP} table 10 priority 10
 ip rule add to ${WG_SUBNET} table 10 priority 11
 # Flush routing cache
 ip route flush cache
+
+# Try to get the external interface
+${BIN_DIR}/udev_hook.sh ${EXT_IF}

@@ -48,11 +48,9 @@ ip route add ${HS_DIRIF_IP} dev ${GW_DIRIF} src ${GW_DIRIF_IP}
 
 # Setup the external network
 ip link add name ${GW_EXTIF} type bridge
-ip link set ${EXT_IF} master ${GW_EXTIF}
 ip link set ${GW_MIDIF} master ${GW_EXTIF}
 ip link set ${GW_EXTIF} address ${EXT_MACADDR}
 ip addr add ${EXT_NET} dev ${GW_EXTIF}
-ip link set ${EXT_IF} up
 ip link set ${GW_MIDIF} up
 ip link set ${GW_EXTIF} up
 ip route add default via ${EXT_GATEWAY}

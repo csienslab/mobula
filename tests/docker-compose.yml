@@ -78,7 +78,6 @@ services:
       dockerfile: extrawire.dockerfile
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - .:/tests:ro
     privileged: true
     networks:
       test_net:
