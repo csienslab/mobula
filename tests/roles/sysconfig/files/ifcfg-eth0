@@ -1,0 +1,8 @@
+DEVICE=eth0
+NAME=eth0
+BOOTPROTO=none
+ONBOOT=yes
+IPADDR={{inventory_hostname}}
+PREFIX=24
+GATEWAY=192.0.2.1
+DNS1=1.1.1.1

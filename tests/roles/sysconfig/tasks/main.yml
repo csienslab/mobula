@@ -1,0 +1,15 @@
+---
+- template:
+    src: 'files/ifcfg-eth0'
+    dest: '/etc/sysconfig/network-scripts/ifcfg-eth0'
+
+- file:
+    path: '/etc/sysconfig/network'
+    state: touch
+
+- lineinfile:
+    path: '/etc/sysconfig/network-scripts/ifup-post'
+    regexp: '^{{install_dir}}/bin/interface_hook.sh ${DEVICE}'
+    insertbefore: '^exit 0'
+    line: '{{install_dir}}/bin/interface_hook.sh ${DEVICE}'
+    state: present

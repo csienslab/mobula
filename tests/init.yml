@@ -1,0 +1,16 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    - include_vars: '../vars/common.yml'
+
+    - package:
+        name: initscripts
+        state: present
+
+    - include_role:
+        name: sysconfig
+
+    - systemd:
+        name: 'network'
+        enabled: yes
