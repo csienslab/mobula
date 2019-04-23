@@ -21,8 +21,7 @@ services:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
     networks:
-      test_net:
-        ipv4_address: 192.0.2.3
+      - test_net
 
   host4:
     hostname: host4.example.com
@@ -45,8 +44,7 @@ services:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
     networks:
-      test_net:
-        ipv4_address: 192.0.2.5
+      - test_net
 
   host6:
     hostname: host6.example.com
