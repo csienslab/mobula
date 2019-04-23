@@ -46,5 +46,7 @@ ip rule add to ${WG_SUBNET} table 10 priority 11
 # Flush routing cache
 ip route flush cache
 
+{% if no_net_hook is not defined %}
 # Try to get the external interface
-${BIN_DIR}/udev_hook.sh ${EXT_IF}
+${BIN_DIR}/interface_hook.sh ${EXT_IF}
+{% endif %}
