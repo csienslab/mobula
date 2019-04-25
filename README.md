@@ -143,15 +143,6 @@ all:
     ${Host external IP, which can access Internet}:
       host_id: ${Host ID, which must be in the range [1, 32767]}
       hostname: '${Host FQDN in access network, which can be a private domain}'
-      wireguard:
-        public_key: '${Unique WireGuard public key}'
-        private_key: '${Unique WireGuard private key}'
-```
-You can generate the WireGuard key pair of each host by using the following commands:
-```sh
-wg genkey | tee privatekey | wg pubkey > publickey
-cat publickey
-cat privatekey
 ```
 
 ### extra_hosts.yml
@@ -168,6 +159,8 @@ The file describes the external WireGuard clients which can connect to access ne
 extra_wires:
   ${extrawire IP 1, which must be in the subnet 10.30.128.0/17}/32: 'WireGuard public key 1'
 ```
+
+Each time you deploy Mobula, it will generate a new WireGuard key pairs for each host. If you need public keys of the hosts to configure the external WireGuard clients, they can be found in `wireguard_pubkeys.yml` after your deployment.
 
 ## Deploy
 ### On Deployer
