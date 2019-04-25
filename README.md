@@ -136,7 +136,7 @@ There are 3 config files must be created and configured before deploying:
 - extra_wires.yml
 
 ### hosts.yml
-This file describes the hosts and the settings of access network. Because it also contains the private keys of WireGuard, this file should be protected. Example can be found at `hosts.yml.example`.
+This file describes the hosts and the settings of access network. Example can be found at `hosts.yml.example`.
 ```yml
 all:
   hosts:
