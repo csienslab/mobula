@@ -46,3 +46,9 @@
     group: root
     mode: 0644
   when: no_net_hook is not defined
+
+- name: Remove Mobula Udev Rules
+  file:
+    path: '/etc/udev/rules.d/573-mobula.rules'
+    state: absent
+  when: no_net_hook is defined

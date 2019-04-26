@@ -11,7 +11,6 @@ ip link del ${OVS_FACIF} 2>/dev/null
 ip link del ${HS_FACIF} 2>/dev/null
 ip link del ${GW_DIRIF} 2>/dev/null
 ip link del ${HS_DIRIF} 2>/dev/null
-ip netns del ${NS_NAME} 2>/dev/null
 
 # Try to create the namespace
 ip netns add ${NS_NAME} 2>/dev/null
