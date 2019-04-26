@@ -18,7 +18,18 @@
   tasks:
     - include_vars: 'vars/expects.yml'
 
-    - shell: 'wg-quick up /tests/extrawire_test.conf'
+    - include_vars:
+        file: 'wireguard_pubkeys.yml'
+        name: 'wireguard_public_keys'
+
+    - template:
+        src: 'extrawire_test.conf'
+        dest: '/tmp/extrawire_test.conf'
+        owner: root
+        group: root
+        mode: 0660
+
+    - shell: 'wg-quick up /tmp/extrawire_test.conf'
 
     - shell: 'ping -c 1 {{networks[item].facade_addr | ipaddr("address")}}'
       register: task_result

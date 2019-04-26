@@ -9,14 +9,6 @@
   when: item.state == 'directory'
   with_filetree: 'files/root'
 
-- name: Backup External Interface
-  copy:
-    content: '{{ext_net | to_json}}'
-    dest: '{{etc_dir}}/extif.json'
-    owner: root
-    group: root
-    mode: 0660
-
 - name: Copy Mobula Files
   template:
     src: '{{item.src}}'
@@ -26,6 +18,9 @@
     mode: '{{item.mode}}'
   when: item.state == 'file'
   with_filetree: 'files/root'
+
+- name: Generate WireGuard Keys
+  include_tasks: 'generate_wireguard_key.yml'
 
 - name: Generate WireGuard Configuration
   template:
@@ -42,3 +37,12 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Copy Mobula Udev Rules
+  template:
+    src: 'files/573-mobula.rules'
+    dest: '/etc/udev/rules.d'
+    owner: root
+    group: root
+    mode: 0644
+  when: no_net_hook is not defined

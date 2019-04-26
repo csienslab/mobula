@@ -20,8 +20,7 @@
     options:dst_port=6254
     options:key={{geneve_tunnel_key}}
   when: item != inventory_hostname
-  with_inventory_hostnames:
-    - all
+  with_items: '{{groups["all"]}}'
 
 - name: Restart DNS Server
   shell: '{{bin_dir}}/run_dns_server.sh restart'

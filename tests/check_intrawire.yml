@@ -5,12 +5,10 @@
     - include_vars: 'vars/expects.yml'
 
     - shell: 'ping -c 1 {{networks[item].intrawire_ip}}'
-      with_inventory_hostnames:
-        - all
+      with_items: '{{groups["all"]}}'
 
     - include_role:
         name: setup_network
 
     - shell: 'ping -c 1 {{networks[item].intrawire_ip}}'
-      with_inventory_hostnames:
-        - all
+      with_items: '{{groups["all"]}}'

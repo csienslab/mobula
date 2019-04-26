@@ -1,0 +1,25 @@
+---
+- local_action: 'shell wg genkey | tee /dev/fd/2 | wg pubkey'
+  register: genkey_result
+  with_items: '{{groups["all"]}}'
+  run_once: true
+
+- set_fact:
+    wireguard_keys: '{{wireguard_keys | default({}) | combine({item.item: {"public": item.stdout, "private": item.stderr}})}}'
+  with_items: '{{genkey_result.results}}'
+  run_once: true
+
+- set_fact:
+    public_keys: '{{public_keys | default({}) | combine({item.item: item.stdout})}}'
+  with_items: '{{genkey_result.results}}'
+  run_once: true
+
+- name: Save WireGuard Public Keys
+  local_action: 'copy content={{public_keys | to_nice_yaml}} dest={{playbook_dir}}/wireguard_pubkeys.yml'
+  run_once: true
+  when: test is not defined
+
+- name: Save WireGuard Public Keys (Test)
+  local_action: 'copy content={{public_keys | to_nice_yaml}} dest={{playbook_dir}}/tests/wireguard_pubkeys.yml'
+  run_once: true
+  when: test is defined

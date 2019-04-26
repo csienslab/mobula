@@ -3,12 +3,6 @@ all:
     192.0.2.1:
       host_id: 1
       hostname: 'alice.example.com'
-      wireguard:
-        public_key: '4hGCg+9LyHEo49xFyWGLGD+6TodAFsyLLnjs7IEZN38='
-        private_key: 'ONTnhE+dZw5usefSNZmWvAvYSxm2LfuWnKuU0qMT8F8='
     192.0.2.2:
       host_id: 2
       hostname: 'bob.example.com'
-      wireguard:
-        public_key: 'PtuhdEgGC+mEhhM/Z5GUB367Lrx2XyB4DiVCfAHN3WA='
-        private_key: 'MNCh1yEApwty/q5W8nQMLZ6Yd0tsU+pfBZD2DlSnFnQ='
